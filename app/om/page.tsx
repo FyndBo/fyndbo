@@ -11,12 +11,12 @@ export default function OmSida() {
       </div>
 
       <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
-        {/* Logga - större på mobil */}
+        {/* Logga - STÖRRE på alla enheter */}
         <div className="text-center mb-8 sm:mb-12">
           <img 
             src="/Fyndbo-blue-bkg.png" 
             alt="FyndBo.se" 
-            className="h-24 sm:h-28 md:h-32 lg:h-40 xl:h-48 2xl:h-56 mx-auto w-auto hover:scale-105 transition-transform duration-500" 
+            className="h-28 sm:h-32 md:h-40 lg:h-48 xl:h-56 2xl:h-64 mx-auto w-auto hover:scale-105 transition-transform duration-500 drop-shadow-xl" 
           />
         </div>
 
