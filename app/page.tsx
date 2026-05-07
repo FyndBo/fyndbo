@@ -73,12 +73,12 @@ export default function Home() {
       </div>
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        {/* Logga - DUBBELT STÖRRE på mobil */}
+        {/* Logga - MAXIMAL storlek */}
         <div className="flex justify-center pt-4 pb-6 sm:pt-8 sm:pb-16">
           <img 
             src="/Fyndbo-blue-bkg.png" 
             alt="FyndBo.se" 
-            className="h-56 sm:h-40 md:h-48 lg:h-56 xl:h-64 2xl:h-72 w-auto hover:scale-105 transition-transform duration-500 drop-shadow-xl" 
+            className="h-64 sm:h-56 md:h-64 lg:h-72 xl:h-80 2xl:h-96 w-auto hover:scale-105 transition-transform duration-500 drop-shadow-xl" 
           />
         </div>
 
