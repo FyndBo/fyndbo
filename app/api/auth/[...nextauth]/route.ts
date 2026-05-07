@@ -3,6 +3,27 @@ import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { supabaseAdmin } from '../../../../lib/supabaseAdmin'
 
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id?: string
+      name?: string | null
+      email?: string | null
+      image?: string | null
+      role?: string
+    }
+  }
+  interface User {
+    role?: string
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    role?: string
+  }
+}
+
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -21,6 +42,7 @@ const handler = NextAuth({
             id: '1',
             email: credentials?.email || 'admin@fyndbo.se',
             name: 'Admin',
+            role: 'admin',
           }
         }
         return null
@@ -42,12 +64,13 @@ const handler = NextAuth({
         if (error || !data) {
           return false
         }
+        user.role = 'admin'
       }
       return true
     },
     async jwt({ token, user }) {
       if (user) {
-        token.role = 'admin'
+        token.role = user.role
       }
       return token
     },

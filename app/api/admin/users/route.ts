@@ -1,9 +1,10 @@
 import { supabaseAdmin } from '../../../../lib/supabaseAdmin'
 import { NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
+import type { NextRequest } from 'next/server'
 
 // Hämta alla admin-användare
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
   if (!token) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -24,7 +25,7 @@ export async function GET(request: Request) {
 }
 
 // Lägg till ny admin-användare
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
   if (!token) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -57,7 +58,7 @@ export async function POST(request: Request) {
 }
 
 // Ta bort admin-användare
-export async function DELETE(request: Request) {
+export async function DELETE(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
   if (!token) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
