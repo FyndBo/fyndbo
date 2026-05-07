@@ -87,7 +87,7 @@ export default function Home() {
         {/* STÖRRE logga */}
         <div className="flex justify-center pt-12 pb-16">
           <img 
-            src="/FyndBo-blue-bkg.png" 
+            src="/Fyndbo-blue-bkg.png"
             alt="FyndBo.se" 
             className="h-40 md:h-56 lg:h-72 w-auto hover:scale-105 transition-transform duration-700 drop-shadow-2xl" 
           />

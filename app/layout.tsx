@@ -13,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="sv">
-      <body className="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
+      <body className="bg-gradient-to-br from-slate-800 via-slate-700 to-indigo-900">
         {children}
       </body>
     </html>

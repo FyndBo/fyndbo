@@ -20,7 +20,7 @@ export default function OmSida() {
       <main className="relative z-10 max-w-4xl mx-auto px-6 py-16">
         {/* STÖRRE logga */}
         <div className="text-center mb-12">
-          <img src="/FyndBo-blue-bkg.png" alt="FyndBo.se" className="h-40 md:h-56 lg:h-72 mx-auto w-auto hover:scale-105 transition-transform duration-500 drop-shadow-2xl" />
+          <img src="/Fyndbo-blue-bkg.png" alt="FyndBo.se" className="h-40 md:h-56 lg:h-72 mx-auto w-auto hover:scale-105 transition-transform duration-500 drop-shadow-2xl" />
         </div>
 
         <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-8 md:p-12 shadow-2xl">
