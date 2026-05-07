@@ -4,7 +4,6 @@ import Link from 'next/link'
 export default function OmSida() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-indigo-900 relative overflow-hidden">
-      {/* Bakgrund */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:60px_60px]"></div>
       <div className="absolute top-0 left-0 w-full h-full opacity-50">
         <div className="absolute top-20 left-10 w-80 h-80 bg-blue-500/15 rounded-full blur-3xl animate-pulse"></div>
@@ -12,15 +11,13 @@ export default function OmSida() {
       </div>
 
       <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
-        {/* Logga med mörk bakgrund */}
+        {/* Logga - centrerad, ingen ram */}
         <div className="text-center mb-8 sm:mb-12">
-          <div className="inline-block bg-slate-800/40 backdrop-blur-sm rounded-2xl p-2">
-            <img 
-              src="/Fyndbo-blue-bkg.png" 
-              alt="FyndBo.se" 
-              className="h-12 sm:h-20 md:h-28 lg:h-32 xl:h-36 2xl:h-40 mx-auto w-auto hover:scale-105 transition-transform duration-500" 
-            />
-          </div>
+          <img 
+            src="/Fyndbo-blue-bkg.png" 
+            alt="FyndBo.se" 
+            className="h-16 sm:h-24 md:h-32 lg:h-40 xl:h-48 2xl:h-56 mx-auto w-auto hover:scale-105 transition-transform duration-500" 
+          />
         </div>
 
         <div className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-white/20 p-5 sm:p-8 md:p-12 shadow-2xl">
