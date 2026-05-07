@@ -74,15 +74,13 @@ export default function Home() {
       </div>
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        {/* Header - logga stor på stora skärmar */}
+        {/* Header - logga utan ram */}
         <div className="flex justify-center pt-4 pb-6 sm:pt-8 sm:pb-16">
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-2 sm:p-3 md:p-4">
-            <img 
-              src="/Fyndbo-blue-bkg.png" 
-              alt="FyndBo.se" 
-              className="h-20 sm:h-28 md:h-40 lg:h-48 xl:h-56 2xl:h-64 w-auto hover:scale-105 transition-transform duration-500" 
-            />
-          </div>
+          <img 
+            src="/Fyndbo-blue-bkg.png" 
+            alt="FyndBo.se" 
+            className="h-20 sm:h-28 md:h-40 lg:h-48 xl:h-56 2xl:h-64 w-auto hover:scale-105 transition-transform duration-500" 
+          />
         </div>
 
         {/* Hero */}
