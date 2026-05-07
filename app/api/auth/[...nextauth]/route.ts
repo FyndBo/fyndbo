@@ -3,7 +3,7 @@ import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { supabaseAdmin } from '../../../../lib/supabaseAdmin'
 
-export const authOptions = {
+const handler = NextAuth({
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -33,7 +33,6 @@ export const authOptions = {
         const userEmail = user.email
         if (!userEmail) return false
 
-        // Kolla i Supabase om e-posten finns i admin_users-tabellen
         const { data, error } = await supabaseAdmin
           .from('admin_users')
           .select('email')
@@ -41,7 +40,6 @@ export const authOptions = {
           .single()
 
         if (error || !data) {
-          console.log(`Nekad inloggning för: ${userEmail} (inte admin)`);
           return false
         }
       }
@@ -64,7 +62,6 @@ export const authOptions = {
     signIn: '/admin/login',
   },
   secret: process.env.NEXTAUTH_SECRET,
-}
+})
 
-const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }

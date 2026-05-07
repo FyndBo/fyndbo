@@ -5,7 +5,6 @@ import { getToken } from 'next-auth/jwt'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Skydda /admin och /admin/*
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
     
