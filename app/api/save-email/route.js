@@ -1,22 +1,19 @@
 import { supabaseAdmin } from '../../../lib/supabaseAdmin'
 import { NextResponse } from 'next/server'
 
-export async function POST(request: Request) {
+export async function POST(request) {
   try {
     const { email } = await request.json()
 
-    // Validera e-post
     if (!email || !email.includes('@')) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
     }
 
-    // Spara i Supabase-tabellen "waitlist"
     const { error } = await supabaseAdmin
       .from('waitlist')
       .insert({ email, created_at: new Date().toISOString() })
 
     if (error) {
-      // Om e-post redan finns (unique constraint)
       if (error.code === '23505') {
         return NextResponse.json({ error: 'Email already registered' }, { status: 409 })
       }
