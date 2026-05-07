@@ -66,6 +66,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-indigo-900 relative overflow-hidden">
+      {/* Bakgrund */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:60px_60px]"></div>
       <div className="absolute top-0 left-0 w-full h-full opacity-50">
         <div className="absolute top-20 left-10 w-80 h-80 bg-blue-500/15 rounded-full blur-3xl animate-pulse"></div>
@@ -73,17 +74,16 @@ export default function Home() {
       </div>
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        {/* Logga med mörk bakgrund */}
+        {/* Logga - utan svart utlinje */}
         <div className="flex justify-center pt-4 pb-6 sm:pt-8 sm:pb-16">
-          <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-2">
-            <img 
-              src="/Fyndbo-blue-bkg.png" 
-              alt="FyndBo.se" 
-              className="h-16 sm:h-24 md:h-36 lg:h-44 xl:h-52 2xl:h-56 w-auto hover:scale-105 transition-transform duration-500" 
-            />
-          </div>
+          <img 
+            src="/Fyndbo-blue-bkg.png" 
+            alt="FyndBo.se" 
+            className="h-16 sm:h-24 md:h-36 lg:h-44 xl:h-52 2xl:h-56 w-auto hover:scale-105 transition-transform duration-500" 
+          />
         </div>
 
+        {/* Hero */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-20">
           <div className="inline-flex items-center gap-2 mb-4 sm:mb-6 px-3 sm:px-4 py-1.5 bg-white/10 rounded-full border border-white/20 backdrop-blur-sm">
             <span className="relative flex h-1.5 w-1.5">
@@ -105,6 +105,7 @@ export default function Home() {
           </p>
         </div>
 
+        {/* Timer */}
         <div className="max-w-md sm:max-w-xl md:max-w-2xl mx-auto mb-12 sm:mb-16">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl md:rounded-3xl border border-white/20 p-5 sm:p-6 md:p-10 text-center shadow-2xl">
             <p className="text-[10px] sm:text-xs md:text-sm text-slate-300 uppercase tracking-wider mb-3 sm:mb-4 md:mb-6">Nedräkning till lansering</p>
@@ -140,6 +141,7 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Läs mer-knapp */}
         <div className="text-center mb-12 sm:mb-16">
           <Link 
             href="/om" 
@@ -152,6 +154,7 @@ export default function Home() {
           </Link>
         </div>
 
+        {/* Formulär */}
         <div className="max-w-md mx-auto mb-16 sm:mb-32">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-white/20 p-5 sm:p-8 text-center">
             <h3 className="text-base sm:text-lg font-semibold text-white mb-1">Bli först att få veta</h3>
@@ -184,6 +187,7 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Footer */}
         <footer className="border-t border-white/10 py-6 sm:py-8 text-center">
           <p className="text-[10px] sm:text-xs text-slate-400">© 2026 FyndBo.se – En plattform för bostadssökande</p>
         </footer>

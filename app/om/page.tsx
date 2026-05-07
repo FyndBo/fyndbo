@@ -12,13 +12,15 @@ export default function OmSida() {
       </div>
 
       <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
-        {/* Logga - utan ram */}
+        {/* Logga med mörk bakgrund */}
         <div className="text-center mb-8 sm:mb-12">
-          <img 
-            src="/Fyndbo-blue-bkg.png" 
-            alt="FyndBo.se" 
-            className="h-16 sm:h-24 md:h-32 lg:h-40 xl:h-48 2xl:h-56 mx-auto w-auto hover:scale-105 transition-transform duration-500" 
-          />
+          <div className="inline-block bg-slate-800/40 backdrop-blur-sm rounded-2xl p-2">
+            <img 
+              src="/Fyndbo-blue-bkg.png" 
+              alt="FyndBo.se" 
+              className="h-12 sm:h-20 md:h-28 lg:h-32 xl:h-36 2xl:h-40 mx-auto w-auto hover:scale-105 transition-transform duration-500" 
+            />
+          </div>
         </div>
 
         <div className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-white/20 p-5 sm:p-8 md:p-12 shadow-2xl">
