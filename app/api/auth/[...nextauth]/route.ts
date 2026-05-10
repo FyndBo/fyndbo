@@ -2,6 +2,7 @@ import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { supabaseAdmin } from '../../../../lib/supabaseAdmin'
+import bcrypt from 'bcryptjs'
 
 declare module 'next-auth' {
   interface Session {
@@ -33,19 +34,64 @@ const handler = NextAuth({
     CredentialsProvider({
       name: 'credentials',
       credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
+        email: { 
+          label: 'E-post', 
+          type: 'email', 
+          placeholder: 'admin@exempel.se' 
+        },
+        password: { 
+          label: 'Lösenord', 
+          type: 'password',
+          placeholder: '••••••••' 
+        },
       },
       async authorize(credentials) {
-        if (credentials?.password === process.env.ADMIN_PASSWORD) {
+        // Kräv BÅDE email och lösenord
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error('E-post och lösenord krävs')
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(credentials.email)) {
+          throw new Error('Ogiltig e-postadress')
+        }
+
+        // Kolla admin_users först
+        const { data: adminUser } = await supabaseAdmin
+          .from('admin_users')
+          .select('email, password_hash')
+          .eq('email', credentials.email.toLowerCase().trim())
+          .single()
+
+        if (adminUser) {
+          if (!adminUser.password_hash) {
+            throw new Error('Detta konto använder Google-inloggning. Klicka på "Logga in med Google".')
+          }
+
+          const isValidPassword = await bcrypt.compare(credentials.password, adminUser.password_hash)
+          if (!isValidPassword) {
+            throw new Error('Fel lösenord')
+          }
+
+          return {
+            id: adminUser.email,
+            email: adminUser.email,
+            name: adminUser.email.split('@')[0],
+            role: 'admin',
+          }
+        }
+
+        // Fallback: super-admin lösenord (ADMIN_PASSWORD i .env)
+        if (credentials.password === process.env.ADMIN_PASSWORD) {
           return {
             id: '1',
-            email: credentials?.email || 'admin@fyndbo.se',
+            email: credentials.email.toLowerCase().trim(),
             name: 'Admin',
             role: 'admin',
           }
         }
-        return null
+
+        throw new Error('Inget konto hittades med denna e-post')
       },
     }),
   ],
@@ -55,15 +101,18 @@ const handler = NextAuth({
         const userEmail = user.email
         if (!userEmail) return false
 
+        // Kontrollera att användaren finns i admin_users
         const { data, error } = await supabaseAdmin
           .from('admin_users')
           .select('email')
-          .eq('email', userEmail)
+          .eq('email', userEmail.toLowerCase().trim())
           .single()
 
         if (error || !data) {
-          return false
+          console.log(`Inloggning nekad: ${userEmail} finns inte i admin_users`)
+          return false // Neka åtkomst
         }
+        
         user.role = 'admin'
       }
       return true
@@ -71,18 +120,25 @@ const handler = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role
+        token.email = user.email
       }
       return token
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.role = token.role
+        session.user.role = token.role as string
+        session.user.email = token.email as string
       }
       return session
     },
   },
   pages: {
     signIn: '/admin/login',
+    error: '/admin/login',
+  },
+  session: {
+    strategy: 'jwt',
+    maxAge: 24 * 60 * 60, // 24 timmar
   },
   secret: process.env.NEXTAUTH_SECRET,
 })

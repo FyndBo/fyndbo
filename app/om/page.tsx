@@ -1,106 +1,216 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
+
+// ✅ Ikoner utanför komponenten - skapas bara en gång
+function CostIcon() {
+  return (
+    <svg aria-hidden="true" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 6v4M12 16v2" strokeLinecap="round" />
+      <circle cx="12" cy="14" r="2" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+function TargetIcon() {
+  return (
+    <svg aria-hidden="true" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+function TechIcon() {
+  return (
+    <svg aria-hidden="true" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="4" y="6" width="16" height="12" rx="1" />
+      <path d="M8 10h8M8 14h4" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function LightbulbIcon() {
+  return (
+    <svg aria-hidden="true" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M9 18h6M10 21h4" strokeLinecap="round" />
+      <path d="M12 3a7 7 0 0 0-7 7c0 2.8 1.5 4.5 2 5.5V17h10v-1.5c.5-1 2-2.7 2-5.5a7 7 0 0 0-7-7z" />
+      <path d="M12 8v4" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function CheckIcon() {
+  return (
+    <svg aria-hidden="true" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+function ArrowLeftIcon() {
+  return (
+    <svg aria-hidden="true" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M15 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+function QuoteIcon() {
+  return (
+    <svg aria-hidden="true" className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M10 11H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6c0 2-1 3-3 3" strokeLinecap="round" />
+      <path d="M20 11h-4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6c0 2-1 3-3 3" strokeLinecap="round" />
+    </svg>
+  )
+}
 
 export default function OmSida() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-indigo-900 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:60px_60px]"></div>
-      <div className="absolute top-0 left-0 w-full h-full opacity-50">
-        <div className="absolute top-20 left-10 w-80 h-80 bg-blue-500/15 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-purple-500/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+      {/* Bakgrundsdekorationer */}
+      <div className="absolute inset-0" aria-hidden="true">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse motion-reduce:animate-none"></div>
+        <div className="absolute bottom-10 right-10 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse motion-reduce:animate-none delay-1000"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,#ffffff03_1px,transparent_1px)] bg-[size:50px_50px]"></div>
       </div>
 
-      <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
-        {/* Logga - MAXIMAL storlek */}
-        <div className="text-center mb-8 sm:mb-12">
-          <img 
+      <main className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        {/* Logga */}
+        <div className="text-center mb-5 sm:mb-6">
+          <Image 
             src="/Fyndbo-blue-bkg.png" 
-            alt="FyndBo.se" 
-            className="h-56 sm:h-48 md:h-56 lg:h-64 xl:h-72 2xl:h-80 mx-auto w-auto hover:scale-105 transition-transform duration-500 drop-shadow-xl" 
+            alt="FyndBo.se - Sveriges modernaste bostadsplattform" 
+            width={800}
+            height={400}
+            className="h-64 sm:h-56 md:h-64 lg:h-72 xl:h-80 2xl:h-96 w-auto hover:scale-105 transition-transform duration-500 mx-auto drop-shadow-xl"
+            priority
+            sizes="(max-width: 640px) 100vw, 75vw"
           />
         </div>
 
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-white/20 p-5 sm:p-8 md:p-12 shadow-2xl">
-          <div className="text-center mb-6 sm:mb-10">
-            <div className="inline-block mb-3 sm:mb-4 px-3 sm:px-4 py-1.5 bg-white/10 rounded-full border border-white/20">
-              <p className="text-[10px] sm:text-xs text-white/70 tracking-wider uppercase">✦ Varför FyndBo ✦</p>
+        <div className="bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-white/10 p-6 sm:p-8 md:p-10">
+          {/* Header */}
+          <header className="text-center mb-8 sm:mb-10">
+            <div className="inline-block mb-2 sm:mb-3 px-4 py-1.5 bg-white/10 rounded-full border border-white/20">
+              <p className="text-xs sm:text-sm text-gray-300 tracking-wider uppercase">✦ Varför FyndBo ✦</p>
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">En bostadsmarknad som fungerar för alla</h1>
-            <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto px-2">
-              Vi har studerat dagens system och identifierat flera grundläggande brister. FyndBo.se är vårt svar.
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-4">
+              En bostadsmarknad som fungerar för alla
+            </h1>
+            <p className="text-sm sm:text-base text-gray-300 max-w-2xl mx-auto">
+              Vi har analyserat dagens system och identifierat flera grundläggande brister. 
+              FyndBo.se är vårt svar – en plattform byggd på transparens, rättvisa och modern teknik.
             </p>
+          </header>
+
+          {/* Problem-sektioner */}
+          <div className="space-y-4">
+            <section className="bg-gradient-to-r from-rose-500/10 to-transparent rounded-xl p-5 border-l-4 border-rose-500 group hover:scale-[1.02] transition-transform duration-300">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="text-rose-400 group-hover:scale-110 transition-transform" aria-hidden="true">
+                  <CostIcon />
+                </div>
+                <h2 className="text-lg sm:text-xl font-semibold text-white">Orimliga kostnader</h2>
+              </div>
+              <p className="text-sm sm:text-base text-gray-300 pl-9">
+                Priserna för att synas på de stora plattformarna har skjutit i höjden. 
+                Det som en gång var en rimlig avgift har blivit en rejäl tröskel för många.
+              </p>
+            </section>
+
+            <section className="bg-gradient-to-r from-amber-500/10 to-transparent rounded-xl p-5 border-l-4 border-amber-500 group hover:scale-[1.02] transition-transform duration-300">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="text-amber-400 group-hover:scale-110 transition-transform" aria-hidden="true">
+                  <TargetIcon />
+                </div>
+                <h2 className="text-lg sm:text-xl font-semibold text-white">Fel incitament</h2>
+              </div>
+              <p className="text-sm sm:text-base text-gray-300 pl-9">
+                Dagens modell premierar volym och höga priser framför verklig kundnytta. 
+                Det är inte den som skapar mest värde som vinner.
+              </p>
+            </section>
+
+            <section className="bg-gradient-to-r from-gray-500/10 to-transparent rounded-xl p-5 border-l-4 border-gray-500 group hover:scale-[1.02] transition-transform duration-300">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="text-gray-400 group-hover:scale-110 transition-transform" aria-hidden="true">
+                  <TechIcon />
+                </div>
+                <h2 className="text-lg sm:text-xl font-semibold text-white">Gammal teknik</h2>
+              </div>
+              <p className="text-sm sm:text-base text-gray-300 pl-9">
+                Trots miljardvärden har den tekniska utvecklingen stått stilla i åratal. 
+                Sökfunktioner, kartor och filtrering fungerar undermåligt.
+              </p>
+            </section>
           </div>
 
-          <div className="space-y-4 sm:space-y-6 text-slate-300 leading-relaxed">
-            <div className="bg-rose-500/10 rounded-lg sm:rounded-xl p-4 sm:p-6 border-l-4 border-rose-400">
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-2">📈 Orimliga kostnader</h3>
-              <p className="text-sm sm:text-base">
-                Priserna för att synas på de stora plattformarna har skjutit i höjden. Det som en gång var en rimlig avgift har blivit en rejäl tröskel.
-              </p>
+          {/* Lösnings-sektion */}
+          <section className="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-xl p-5 sm:p-6 border-l-4 border-blue-500 mt-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="text-blue-400" aria-hidden="true">
+                <LightbulbIcon />
+              </div>
+              <h2 className="text-lg sm:text-xl font-semibold text-white">Därför bygger vi FyndBo.se</h2>
             </div>
-
-            <div className="bg-amber-500/10 rounded-lg sm:rounded-xl p-4 sm:p-6 border-l-4 border-amber-400">
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-2">🎯 Fel incitament</h3>
-              <p className="text-sm sm:text-base">
-                Dagens modell premierar volym och höga priser framför kundnytta. Det är inte den som skapar mest värde som vinner.
-              </p>
+            <p className="text-sm sm:text-base text-gray-200 mb-5 pl-9">
+              Vi tror att teknik kan göra bostadsmarknaden mer transparent, rättvis och tillgänglig. 
+              Därför skapar vi en plattform som sätter dig i första rummet.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { title: 'Transparent prissättning', desc: 'Inga dolda avgifter' },
+                { title: 'Mäklare för dig', desc: 'Deras incitament är din glädje' },
+                { title: 'Modern sökmotor', desc: 'Hitta drömhemmet snabbt' },
+                { title: 'Alla annonser samlade', desc: 'Oavsett var de är publicerade' },
+              ].map((item) => (
+                <div key={item.title} className="bg-white/5 rounded-xl p-3 text-center hover:bg-white/10 transition-all duration-300 group">
+                  <div className="flex justify-center mb-2" aria-hidden="true">
+                    <div className="text-emerald-400 group-hover:scale-110 transition-transform">
+                      <CheckIcon />
+                    </div>
+                  </div>
+                  <p className="font-medium text-white text-xs sm:text-sm">{item.title}</p>
+                  <p className="text-gray-300 text-[10px] sm:text-xs mt-1">{item.desc}</p>
+                </div>
+              ))}
             </div>
+          </section>
 
-            <div className="bg-slate-500/10 rounded-lg sm:rounded-xl p-4 sm:p-6 border-l-4 border-slate-400">
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-2">⚙️ Gammal teknik</h3>
-              <p className="text-sm sm:text-base">
-                Trots miljardvärden har den tekniska utvecklingen stått stilla. Sökfunktioner, kartor och filtrering fungerar undermåligt.
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-lg sm:rounded-xl p-4 sm:p-6 border-l-4 border-blue-400 mt-4 sm:mt-6">
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-3">💡 Därför bygger vi FyndBo.se</h3>
-              <p className="text-sm sm:text-base text-slate-200 mb-3 sm:mb-4">
-                Vi tror att teknik kan göra bostadsmarknaden mer transparent, rättvis och tillgänglig. Därför skapar vi en plattform som sätter dig i första rummet.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                <div className="bg-white/10 rounded-lg p-2 sm:p-3">
-                  <p className="font-medium text-white text-sm">🔍 Transparent prissättning</p>
-                  <p className="text-xs sm:text-sm text-slate-300">Inga dolda avgifter</p>
-                </div>
-                <div className="bg-white/10 rounded-lg p-2 sm:p-3">
-                  <p className="font-medium text-white text-sm">🤝 Mäklare som jobbar för dig</p>
-                  <p className="text-xs sm:text-sm text-slate-300">Deras incitament är din glädje</p>
-                </div>
-                <div className="bg-white/10 rounded-lg p-2 sm:p-3">
-                  <p className="font-medium text-white text-sm">⚡ Modern sökmotor</p>
-                  <p className="text-xs sm:text-sm text-slate-300">Hitta drömhemmet snabbt</p>
-                </div>
-                <div className="bg-white/10 rounded-lg p-2 sm:p-3">
-                  <p className="font-medium text-white text-sm">🏠 Alla annonser samlade</p>
-                  <p className="text-xs sm:text-sm text-slate-300">Oavsett var de är publicerade</p>
-                </div>
+          {/* Citat */}
+          <figure className="text-center pt-8">
+            <div className="flex justify-center mb-3" aria-hidden="true">
+              <div className="text-gray-400 opacity-50">
+                <QuoteIcon />
               </div>
             </div>
+            <blockquote className="text-gray-200 italic text-base sm:text-lg max-w-2xl mx-auto">
+              <p>"En bättre väg till ditt nästa hem – utan krångel och dolda agendor."</p>
+            </blockquote>
+            <figcaption className="text-blue-400 mt-4 font-medium text-sm sm:text-base">
+              — Teamet bakom <cite className="not-italic">FyndBo.se</cite>
+            </figcaption>
+          </figure>
 
-            <div className="text-center pt-4">
-              <p className="text-slate-300 italic text-sm sm:text-base">
-                "En bättre väg till ditt nästa hem – utan krångel och dolda agendor."
-              </p>
-              <p className="text-blue-300 mt-3 sm:mt-4 font-medium text-sm sm:text-base">— Teamet bakom FyndBo.se</p>
-            </div>
-          </div>
-
-          <div className="mt-8 sm:mt-12 text-center">
+          {/* Tillbaka-knapp */}
+          <div className="mt-8 text-center">
             <Link 
               href="/" 
-              className="group inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-medium px-5 sm:px-8 py-2.5 sm:py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-xl transform hover:-translate-y-0.5 text-sm sm:text-base"
+              className="group inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium px-6 sm:px-8 py-2.5 sm:py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-xl text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-900"
+              aria-label="Gå tillbaka till startsidan"
             >
-              <svg className="w-3 h-3 sm:w-4 sm:h-4 group-hover:-translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
+              <ArrowLeftIcon />
               <span>Tillbaka till startsidan</span>
             </Link>
           </div>
         </div>
 
-        <footer className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-white/10 text-center">
-          <p className="text-xs text-slate-400">© 2026 FyndBo.se – En plattform för bostadssökande</p>
+        {/* Footer */}
+        <footer className="mt-8 sm:mt-10 pt-6 border-t border-white/10 text-center">
+          <p className="text-xs sm:text-sm text-gray-300">© 2026 FyndBo.se – En plattform för bostadssökande</p>
         </footer>
       </main>
     </div>

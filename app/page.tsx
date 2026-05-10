@@ -65,16 +65,17 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-indigo-900 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:60px_60px]"></div>
-      <div className="absolute top-0 left-0 w-full h-full opacity-50">
-        <div className="absolute top-20 left-10 w-80 h-80 bg-blue-500/15 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-purple-500/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+      {/* Bakgrundsdekorationer - samma som om-sidan */}
+      <div className="absolute inset-0">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 right-10 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,#ffffff03_1px,transparent_1px)] bg-[size:50px_50px]"></div>
       </div>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
         {/* Logga - MAXIMAL storlek */}
-        <div className="flex justify-center pt-4 pb-6 sm:pt-8 sm:pb-16">
+        <div className="flex justify-center pt-2 pb-3 sm:pt-4 sm:pb-6">
           <img 
             src="/Fyndbo-blue-bkg.png" 
             alt="FyndBo.se" 
@@ -82,8 +83,8 @@ export default function Home() {
           />
         </div>
 
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-20">
-          <div className="inline-flex items-center gap-2 mb-4 sm:mb-6 px-3 sm:px-4 py-1.5 bg-white/10 rounded-full border border-white/20 backdrop-blur-sm">
+        <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-10">
+          <div className="inline-flex items-center gap-2 mb-3 sm:mb-4 px-3 sm:px-4 py-1.5 bg-white/10 rounded-full border border-white/20 backdrop-blur-sm">
             <span className="relative flex h-1.5 w-1.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
@@ -91,54 +92,54 @@ export default function Home() {
             <span className="text-[10px] sm:text-xs text-gray-300 tracking-wide">Lanseras 24 juni 2026</span>
           </div>
           
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-[1.1] tracking-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-3 sm:mb-4 leading-[1.1] tracking-tight">
             Hitta ditt
             <span className="block bg-gradient-to-r from-blue-300 via-indigo-300 to-purple-300 bg-clip-text text-transparent">
               nästa hem
             </span>
           </h1>
           
-          <p className="text-sm sm:text-base md:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed px-2">
+          <p className="text-sm sm:text-base md:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed px-2">
             Alla bostadsannonser samlade på ett ställe. Sök, jämför och hitta drömhemmet.
           </p>
         </div>
 
-        <div className="max-w-md sm:max-w-xl md:max-w-2xl mx-auto mb-12 sm:mb-16">
+        <div className="max-w-md sm:max-w-xl md:max-w-2xl mx-auto mb-8 sm:mb-10">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl md:rounded-3xl border border-white/20 p-5 sm:p-6 md:p-10 text-center shadow-2xl">
-            <p className="text-[10px] sm:text-xs md:text-sm text-slate-300 uppercase tracking-wider mb-3 sm:mb-4 md:mb-6">Nedräkning till lansering</p>
+            <p className="text-[10px] sm:text-xs md:text-sm text-gray-300 uppercase tracking-wider mb-3 sm:mb-4 md:mb-6">Nedräkning till lansering</p>
             <div className="flex justify-center items-center gap-3 sm:gap-4 md:gap-6">
               <div className="text-center">
                 <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-mono font-bold text-white bg-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-1.5 sm:py-2 md:py-3 min-w-[60px] sm:min-w-[70px] md:min-w-[80px] shadow-inner">
                   {timeLeft.days}
                 </div>
-                <p className="text-[9px] sm:text-[10px] md:text-xs text-slate-400 mt-1 sm:mt-2">DAGAR</p>
+                <p className="text-[9px] sm:text-[10px] md:text-xs text-gray-400 mt-1 sm:mt-2">DAGAR</p>
               </div>
-              <span className="text-slate-500 text-lg sm:text-2xl md:text-3xl font-light">/</span>
+              <span className="text-gray-500 text-lg sm:text-2xl md:text-3xl font-light">/</span>
               <div className="text-center">
                 <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-mono font-bold text-white bg-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-1.5 sm:py-2 md:py-3 min-w-[60px] sm:min-w-[70px] md:min-w-[80px] shadow-inner">
                   {timeLeft.hours.toString().padStart(2, '0')}
                 </div>
-                <p className="text-[9px] sm:text-[10px] md:text-xs text-slate-400 mt-1 sm:mt-2">TIMMAR</p>
+                <p className="text-[9px] sm:text-[10px] md:text-xs text-gray-400 mt-1 sm:mt-2">TIMMAR</p>
               </div>
-              <span className="text-slate-500 text-lg sm:text-2xl md:text-3xl font-light">/</span>
+              <span className="text-gray-500 text-lg sm:text-2xl md:text-3xl font-light">/</span>
               <div className="text-center">
                 <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-mono font-bold text-white bg-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-1.5 sm:py-2 md:py-3 min-w-[60px] sm:min-w-[70px] md:min-w-[80px] shadow-inner">
                   {timeLeft.minutes.toString().padStart(2, '0')}
                 </div>
-                <p className="text-[9px] sm:text-[10px] md:text-xs text-slate-400 mt-1 sm:mt-2">MINUTER</p>
+                <p className="text-[9px] sm:text-[10px] md:text-xs text-gray-400 mt-1 sm:mt-2">MINUTER</p>
               </div>
-              <span className="text-slate-500 text-lg sm:text-2xl md:text-3xl font-light">/</span>
+              <span className="text-gray-500 text-lg sm:text-2xl md:text-3xl font-light">/</span>
               <div className="text-center">
                 <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-mono font-bold text-white bg-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-1.5 sm:py-2 md:py-3 min-w-[60px] sm:min-w-[70px] md:min-w-[80px] shadow-inner">
                   {timeLeft.seconds.toString().padStart(2, '0')}
                 </div>
-                <p className="text-[9px] sm:text-[10px] md:text-xs text-slate-400 mt-1 sm:mt-2">SEKUNDER</p>
+                <p className="text-[9px] sm:text-[10px] md:text-xs text-gray-400 mt-1 sm:mt-2">SEKUNDER</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="text-center mb-12 sm:mb-16">
+        <div className="text-center mb-8 sm:mb-10">
           <Link 
             href="/om" 
             className="group inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-medium px-5 sm:px-6 py-2.5 sm:py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm sm:text-base"
@@ -150,10 +151,10 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="max-w-md mx-auto mb-16 sm:mb-32">
+        <div className="max-w-md mx-auto mb-10 sm:mb-16">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-white/20 p-5 sm:p-8 text-center">
             <h3 className="text-base sm:text-lg font-semibold text-white mb-1">Bli först att få veta</h3>
-            <p className="text-slate-300 text-xs sm:text-sm mb-4 sm:mb-6">VIP-inbjudan skickas direkt vid lansering</p>
+            <p className="text-gray-300 text-xs sm:text-sm mb-4 sm:mb-6">VIP-inbjudan skickas direkt vid lansering</p>
             
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
               <input
@@ -182,8 +183,8 @@ export default function Home() {
           </div>
         </div>
 
-        <footer className="border-t border-white/10 py-6 sm:py-8 text-center">
-          <p className="text-[10px] sm:text-xs text-slate-400">© 2026 FyndBo.se – En plattform för bostadssökande</p>
+        <footer className="border-t border-white/10 py-4 sm:py-6 text-center">
+          <p className="text-[10px] sm:text-xs text-gray-400">© 2026 FyndBo.se – En plattform för bostadssökande</p>
         </footer>
       </main>
     </div>
