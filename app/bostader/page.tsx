@@ -15,12 +15,18 @@ interface Property {
   image_url: string | null
   latitude: number | null
   longitude: number | null
+  monthly_fee: number | null
+  operating_cost: number | null
+  floor: string | null
+  elevator: boolean | null
+  balcony: boolean | null
+  images: string[]
 }
 
 const MapComponent = dynamic(() => import('./MapComponent'), {
   ssr: false,
   loading: () => (
-    <div className="h-[300px] bg-slate-800 rounded-2xl flex items-center justify-center">
+    <div className="h-[250px] bg-slate-800 rounded-2xl flex items-center justify-center">
       <p className="text-white animate-pulse">Laddar karta...</p>
     </div>
   ),
@@ -87,6 +93,7 @@ export default function BostaderPage() {
 
   return (
     <div className="min-h-screen bg-slate-900">
+      {/* Header */}
       <header className="bg-slate-800 border-b border-white/10 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link href="/" className="text-slate-400 hover:text-white transition"><Icons.home /></Link>
@@ -95,6 +102,7 @@ export default function BostaderPage() {
         </div>
       </header>
 
+      {/* Sökfält */}
       <div className="bg-slate-800/50 border-b border-white/5 px-4 py-4">
         <div className="max-w-2xl mx-auto">
           <form onSubmit={handleSearch}>
@@ -115,10 +123,12 @@ export default function BostaderPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className={`relative mx-auto rounded-2xl overflow-hidden border border-white/10 shadow-2xl transition-all duration-300 ${mapExpanded ? 'w-full h-[500px]' : 'w-full max-w-2xl h-[300px]'}`}>
+        {/* Kartwidget */}
+        <div className={`relative mx-auto rounded-2xl overflow-hidden border border-white/10 shadow-2xl transition-all duration-300 ${mapExpanded ? 'w-full h-[500px]' : 'w-full max-w-2xl h-[250px]'}`}>
           <MapComponent
             properties={properties}
             hoveredId={hoveredId}
+            mapExpanded={mapExpanded}
           />
           <button
             onClick={() => setMapExpanded(!mapExpanded)}
@@ -128,35 +138,58 @@ export default function BostaderPage() {
           </button>
         </div>
 
+        {/* Bostadslista – stora kort */}
         <div className="mt-6">
           {loading ? (
             <div className="text-center py-10"><p className="text-white animate-pulse">Laddar...</p></div>
           ) : properties.length === 0 ? (
             <div className="text-center py-10 bg-white/5 rounded-2xl"><p className="text-slate-400">Inga bostäder hittades</p></div>
           ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {properties.map((property) => (
-                <div
+                <Link
+                  href={`/bostader/${property.id}`}
                   key={property.id}
-                  className="bg-white/5 rounded-xl border border-white/10 p-4 hover:border-blue-500/30 transition cursor-pointer"
+                  className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden hover:border-blue-500/30 transition group block"
                   onMouseEnter={() => setHoveredId(property.id)}
                   onMouseLeave={() => setHoveredId(null)}
                 >
-                  <div className="flex gap-3">
-                    {property.image_url && (
-                      <img src={property.image_url} alt={property.title} className="w-20 h-20 object-cover rounded-lg flex-shrink-0" />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-white font-medium text-sm truncate">{property.title}</h3>
-                      <p className="text-blue-400 font-bold text-sm mt-1">{formatPrice(property.price)}</p>
-                      <div className="flex items-center gap-2 mt-1 text-slate-400 text-xs">
-                        {property.area && <span>{property.area} m²</span>}
-                        {property.rooms && <span>· {property.rooms} rum</span>}
+                  {/* Bild */}
+                  <div className="h-48 w-full bg-slate-800 relative overflow-hidden">
+                    {(property.images && property.images.length > 0) || property.image_url ? (
+                      <img
+                        src={property.images?.[0] || property.image_url!}
+                        alt={property.title}
+                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-slate-600">
+                        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                          <rect x="2" y="2" width="20" height="20" rx="2"/>
+                          <circle cx="8.5" cy="8.5" r="1.5"/>
+                          <polyline points="21 15 16 10 5 21"/>
+                        </svg>
                       </div>
-                      <p className="text-slate-500 text-xs mt-1 truncate">{[property.address, property.city].filter(Boolean).join(', ')}</p>
+                    )}
+                    {/* Etiketter */}
+                    <div className="absolute top-2 left-2 flex gap-1">
+                      {property.elevator && <span className="bg-indigo-500/80 text-white text-xs px-2 py-0.5 rounded-full">Hiss</span>}
+                      {property.balcony && <span className="bg-emerald-500/80 text-white text-xs px-2 py-0.5 rounded-full">Balkong</span>}
                     </div>
                   </div>
-                </div>
+
+                  {/* Info */}
+                  <div className="p-4">
+                    <h3 className="text-white font-semibold text-sm truncate">{property.title}</h3>
+                    <p className="text-blue-400 font-bold text-lg mt-1">{formatPrice(property.price)}</p>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-slate-400 text-sm">
+                      {property.area && <span>{property.area} m²</span>}
+                      {property.rooms && <span>{property.rooms} rum</span>}
+                      {property.monthly_fee && <span>{property.monthly_fee.toLocaleString('sv-SE')} kr/mån</span>}
+                    </div>
+                    <p className="text-slate-500 text-xs mt-2 truncate">{[property.address, property.city].filter(Boolean).join(', ')}</p>
+                  </div>
+                </Link>
               ))}
             </div>
           )}
