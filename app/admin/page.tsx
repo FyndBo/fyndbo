@@ -33,7 +33,7 @@ interface Property {
 }
 
 // ============================================================
-// Ikoner (SVG, inga emojis)
+// Ikoner (fullständiga, inga emojis)
 // ============================================================
 const Icons = {
   dashboard: () => (
@@ -190,6 +190,10 @@ export default function AdminPage() {
   const [editPassword, setEditPassword] = useState('')
   const [savingPassword, setSavingPassword] = useState(false)
 
+  const [editingRoleId, setEditingRoleId] = useState<number | null>(null)
+  const [editRole, setEditRole] = useState<string>('')
+  const [savingRole, setSavingRole] = useState(false)
+
   const [newsletterSubject, setNewsletterSubject] = useState('')
   const [newsletterContent, setNewsletterContent] = useState('')
   const [newsletterTestEmail, setNewsletterTestEmail] = useState('')
@@ -287,6 +291,19 @@ export default function AdminPage() {
       await fetchAdmins()
     } catch (err: any) { setAdminError(err.message) }
     finally { setSavingPassword(false) }
+  }
+
+  const updateAdminRole = async (id: number, newRole: string) => {
+    setSavingRole(true)
+    try {
+      const res = await fetch('/api/admin/users', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, role: newRole }) })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Kunde inte uppdatera roll')
+      showSuccess('Roll uppdaterad!')
+      setEditingRoleId(null)
+      await fetchAdmins()
+    } catch (err: any) { setAdminError(err.message) }
+    finally { setSavingRole(false) }
   }
 
   const deleteAdmin = async (id: number) => {
@@ -570,7 +587,22 @@ export default function AdminPage() {
                       <tbody>{admins.map(admin => (
                         <tr key={admin.id} className="border-b border-white/5 hover:bg-white/5">
                           <td className="py-3.5 px-6 text-white text-sm">{admin.email}</td>
-                          <td className="py-3.5 px-6 text-sm"><span className={`px-2 py-0.5 rounded-full text-xs font-medium ${admin.role === 'maklare' ? 'bg-purple-500/20 text-purple-400' : 'bg-blue-500/20 text-blue-400'}`}>{admin.role || 'admin'}</span></td>
+                          <td className="py-3.5 px-6 text-sm" onClick={() => { if (isAdmin) { setEditingRoleId(admin.id); setEditRole(admin.role || 'admin') } }}>
+                            {editingRoleId === admin.id ? (
+                              <div className="flex items-center gap-1">
+                                <select value={editRole} onChange={e => setEditRole(e.target.value)} className="bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-white">
+                                  <option value="admin">Admin</option>
+                                  <option value="maklare">Mäklare</option>
+                                </select>
+                                <button onClick={() => updateAdminRole(admin.id, editRole)} disabled={savingRole} className="text-emerald-400 hover:text-emerald-300 text-xs">Spara</button>
+                                <button onClick={() => setEditingRoleId(null)} className="text-slate-400 hover:text-slate-300 text-xs">Avbryt</button>
+                              </div>
+                            ) : (
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${admin.role === 'maklare' ? 'bg-purple-500/20 text-purple-400' : 'bg-blue-500/20 text-blue-400'}`}>
+                                {admin.role || 'admin'}
+                              </span>
+                            )}
+                          </td>
                           <td className="py-3.5 px-6">{admin.has_password ? (<span className="inline-flex items-center gap-1 text-amber-400 text-xs bg-amber-400/10 px-2.5 py-1 rounded-full"><Icons.key /> Lösenord</span>) : (<span className="inline-flex items-center gap-1 text-blue-400 text-xs bg-blue-400/10 px-2.5 py-1 rounded-full"><Icons.google /> Google</span>)}</td>
                           <td className="py-3.5 px-6 text-slate-400 text-sm hidden md:table-cell">{new Date(admin.created_at).toLocaleDateString('sv-SE')}</td>
                           <td className="py-3.5 px-6 text-right">

@@ -13,7 +13,7 @@ interface AdminUser {
   role: string
 }
 
-// Hämta alla admin-användare
+// GET – hämta alla användare (endast admin)
 export async function GET(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
   if (!token || token.role !== 'admin') {
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Lägg till ny admin-användare
+// POST – skapa ny användare
 export async function POST(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
   if (!token || token.role !== 'admin') {
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Ta bort admin-användare
+// DELETE – ta bort användare
 export async function DELETE(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
   if (!token || token.role !== 'admin') {
@@ -142,7 +142,7 @@ export async function DELETE(request: NextRequest) {
   }
 }
 
-// Uppdatera lösenord (behåll din PUT från tidigare om den fungerar, annars använd denna)
+// PUT – ändra lösenord
 export async function PUT(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
   if (!token || token.role !== 'admin') {
@@ -168,5 +168,31 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     console.error('PUT error:', error)
     return NextResponse.json({ error: 'Kunde inte uppdatera lösenord' }, { status: 500 })
+  }
+}
+
+// PATCH – ändra roll (ny!)
+export async function PATCH(request: NextRequest) {
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+  if (!token || token.role !== 'admin') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
+    const { id, role } = await request.json()
+    if (!id || !role) {
+      return NextResponse.json({ error: 'ID och roll krävs' }, { status: 400 })
+    }
+
+    const { error } = await supabaseAdmin
+      .from('admin_users')
+      .update({ role })
+      .eq('id', id)
+
+    if (error) throw error
+    return NextResponse.json({ success: true, message: 'Roll uppdaterad' })
+  } catch (error) {
+    console.error('PATCH error:', error)
+    return NextResponse.json({ error: 'Kunde inte uppdatera roll' }, { status: 500 })
   }
 }
