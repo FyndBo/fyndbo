@@ -7,21 +7,8 @@ import Link from 'next/link'
 // ============================================================
 // Typer
 // ============================================================
-interface EmailEntry {
-  id: number
-  email: string
-  created_at: string
-}
-
-interface AdminUser {
-  id: number
-  email: string
-  created_at: string
-  added_by: string | null
-  has_password: boolean
-  role?: string
-}
-
+interface EmailEntry { id: number; email: string; created_at: string }
+interface AdminUser { id: number; email: string; created_at: string; added_by: string | null; has_password: boolean; role?: string }
 interface Property {
   id: number
   title: string
@@ -37,121 +24,116 @@ interface Property {
   longitude: number | null
   created_by?: string
   created_at?: string
+  monthly_fee?: number | null
+  operating_cost?: number | null
+  floor?: string | null
+  elevator?: boolean
+  balcony?: boolean
+  images?: string[]
 }
 
 // ============================================================
-// Ikoner (fullständiga, inga emojis)
+// Ikoner (SVG, inga emojis)
 // ============================================================
 const Icons = {
   dashboard: () => (
     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <rect x="2" y="2" width="9" height="9" rx="1.5" />
-      <rect x="13" y="2" width="9" height="9" rx="1.5" />
-      <rect x="2" y="13" width="9" height="9" rx="1.5" />
-      <rect x="13" y="13" width="9" height="9" rx="1.5" />
+      <rect x="2" y="2" width="9" height="9" rx="1.5"/><rect x="13" y="2" width="9" height="9" rx="1.5"/>
+      <rect x="2" y="13" width="9" height="9" rx="1.5"/><rect x="13" y="13" width="9" height="9" rx="1.5"/>
     </svg>
   ),
   users: () => (
     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="9" cy="7" r="3" />
-      <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" strokeLinecap="round" />
-      <circle cx="17" cy="6" r="2" />
-      <path d="M15 14c2.5 0 4.5 1.5 5.5 3.5" strokeLinecap="round" />
+      <circle cx="9" cy="7" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" strokeLinecap="round"/>
+      <circle cx="17" cy="6" r="2"/><path d="M15 14c2.5 0 4.5 1.5 5.5 3.5" strokeLinecap="round"/>
     </svg>
   ),
   email: () => (
     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <rect x="2" y="4" width="20" height="16" rx="2" />
-      <path d="M2 8l10 7 10-7" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8l10 7 10-7" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   newsletter: () => (
     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M21 12l-9 6-9-6" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M3 6v12a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2z" />
-      <path d="M3 6l9 6 9-6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M21 12l-9 6-9-6" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M3 6v12a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2z"/>
+      <path d="M3 6l9 6 9-6" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   home: () => (
     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" strokeLinecap="round" strokeLinejoin="round" />
-      <polyline points="9 22 9 12 15 12 15 22" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" strokeLinecap="round" strokeLinejoin="round"/>
+      <polyline points="9 22 9 12 15 12 15 22" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   add: () => (
     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="9" />
-      <line x1="12" y1="8" x2="12" y2="16" strokeLinecap="round" />
-      <line x1="8" y1="12" x2="16" y2="12" strokeLinecap="round" />
+      <circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16" strokeLinecap="round"/>
+      <line x1="8" y1="12" x2="16" y2="12" strokeLinecap="round"/>
     </svg>
   ),
   delete: () => (
     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="9" />
-      <line x1="8" y1="8" x2="16" y2="16" strokeLinecap="round" />
-      <line x1="16" y1="8" x2="8" y2="16" strokeLinecap="round" />
+      <circle cx="12" cy="12" r="9"/><line x1="8" y1="8" x2="16" y2="16" strokeLinecap="round"/>
+      <line x1="16" y1="8" x2="8" y2="16" strokeLinecap="round"/>
     </svg>
   ),
   edit: () => (
     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   logout: () => (
     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" strokeLinecap="round" strokeLinejoin="round" />
-      <polyline points="16 17 21 12 16 7" strokeLinecap="round" strokeLinejoin="round" />
-      <line x1="21" y1="12" x2="9" y2="12" strokeLinecap="round" />
+      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" strokeLinecap="round" strokeLinejoin="round"/>
+      <polyline points="16 17 21 12 16 7" strokeLinecap="round" strokeLinejoin="round"/>
+      <line x1="21" y1="12" x2="9" y2="12" strokeLinecap="round"/>
     </svg>
   ),
   search: () => (
     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="11" cy="11" r="7" />
-      <line x1="16.5" y1="16.5" x2="21" y2="21" strokeLinecap="round" />
+      <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21" strokeLinecap="round"/>
     </svg>
   ),
   export: () => (
     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" strokeLinecap="round" strokeLinejoin="round" />
-      <polyline points="7 10 12 15 17 10" strokeLinecap="round" strokeLinejoin="round" />
-      <line x1="12" y1="15" x2="12" y2="3" strokeLinecap="round" />
+      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" strokeLinecap="round" strokeLinejoin="round"/>
+      <polyline points="7 10 12 15 17 10" strokeLinecap="round" strokeLinejoin="round"/>
+      <line x1="12" y1="15" x2="12" y2="3" strokeLinecap="round"/>
     </svg>
   ),
   key: () => (
     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="8" cy="12" r="5" />
-      <path d="M12.5 8.5L21 2" strokeLinecap="round" />
-      <path d="M18 5l2 2" strokeLinecap="round" />
-      <path d="M15 8l2 2" strokeLinecap="round" />
+      <circle cx="8" cy="12" r="5"/><path d="M12.5 8.5L21 2" strokeLinecap="round"/>
+      <path d="M18 5l2 2" strokeLinecap="round"/><path d="M15 8l2 2" strokeLinecap="round"/>
     </svg>
   ),
   google: () => (
     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
-      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
-      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
     </svg>
   ),
   template: () => (
     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="2" y="3" width="20" height="16" rx="2" />
-      <path d="M2 8h20" />
-      <path d="M7 5v3M10 5v3" strokeLinecap="round" />
+      <rect x="2" y="3" width="20" height="16" rx="2"/><path d="M2 8h20"/>
+      <path d="M7 5v3M10 5v3" strokeLinecap="round"/>
     </svg>
   ),
   send: () => (
     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <line x1="22" y1="2" x2="11" y2="13" strokeLinecap="round" strokeLinejoin="round" />
-      <polygon points="22 2 15 22 11 13 2 9 22 2" strokeLinecap="round" strokeLinejoin="round" />
+      <line x1="22" y1="2" x2="11" y2="13" strokeLinecap="round" strokeLinejoin="round"/>
+      <polygon points="22 2 15 22 11 13 2 9 22 2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   visitSite: () => (
     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" strokeLinecap="round" strokeLinejoin="round" />
-      <polyline points="15 3 21 3 21 9" strokeLinecap="round" strokeLinejoin="round" />
-      <line x1="10" y1="14" x2="21" y2="3" strokeLinecap="round" />
+      <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" strokeLinecap="round" strokeLinejoin="round"/>
+      <polyline points="15 3 21 3 21 9" strokeLinecap="round" strokeLinejoin="round"/>
+      <line x1="10" y1="14" x2="21" y2="3" strokeLinecap="round"/>
     </svg>
   ),
 }
@@ -217,18 +199,14 @@ export default function AdminPage() {
   const [showPropertyForm, setShowPropertyForm] = useState(false)
   const [editingProperty, setEditingProperty] = useState<Property | null>(null)
   const [propertyForm, setPropertyForm] = useState({
-    title: '',
-    description: '',
-    price: '',
-    area: '',
-    rooms: '',
-    address: '',
-    city: '',
-    latitude: '',
-    longitude: '',
-    image_url: '',
-    listing_url: '',
+    title: '', description: '', price: '', area: '', rooms: '',
+    address: '', city: '', image_url: '', listing_url: '',
+    latitude: '', longitude: '',
+    monthly_fee: '', operating_cost: '', floor: '',
+    elevator: false, balcony: false,
+    images: [] as string[]
   })
+  const [newImageUrl, setNewImageUrl] = useState('')
   const [geocoding, setGeocoding] = useState(false)
 
   const isAdmin = session?.user?.role === 'admin'
@@ -240,13 +218,8 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/admin/login')
-    }
-  }, [status, router])
-
-  useEffect(() => {
-    if (status === 'authenticated' && session) {
+    if (status === 'unauthenticated') router.push('/admin/login')
+    else if (status === 'authenticated' && session) {
       Promise.all([fetchEmails(), fetchAdmins(), fetchProperties()]).finally(() => setLoading(false))
     }
   }, [status, session])
@@ -276,21 +249,22 @@ export default function AdminPage() {
       const res = await fetch('/api/properties')
       if (res.status === 401) { router.push('/admin/login'); return }
       const data = await res.json()
-      let allProperties = data.properties || []
+      let all = data.properties || []
       if (isMaklare && session?.user?.email) {
-        allProperties = allProperties.filter((p: Property) => p.created_by === session.user!.email)
+        all = all.filter((p: Property) => p.created_by === session.user!.email)
       }
-      setProperties(allProperties)
+      setProperties(all)
     } catch (err) { console.error(err) }
   }
 
+  // Användarhantering
   const addAdmin = async () => {
     setAdminError('')
     if (!newAdminEmail || !newAdminEmail.includes('@')) { setAdminError('Ange en giltig e-postadress'); return }
     setAddingAdmin(true)
     try {
       const body: any = { email: newAdminEmail.trim().toLowerCase(), role: newAdminRole }
-      if (newAdminPassword && newAdminPassword.length > 0) body.password = newAdminPassword
+      if (newAdminPassword) body.password = newAdminPassword
       const res = await fetch('/api/admin/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Kunde inte lägga till')
@@ -320,7 +294,8 @@ export default function AdminPage() {
     setDeletingId(id)
     try {
       const res = await fetch('/api/admin/users', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
-      if (!res.ok) throw new Error('Kunde inte ta bort')
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || data.message || 'Kunde inte ta bort')
       showSuccess('Användare borttagen')
       await fetchAdmins()
     } catch (err: any) { setAdminError(err.message) }
@@ -349,7 +324,17 @@ export default function AdminPage() {
     link.click()
   }
 
-  // Geokodning – anropar vårt API
+  // Bildhantering
+  const addImage = () => {
+    if (!newImageUrl) return
+    setPropertyForm(prev => ({ ...prev, images: [...prev.images, newImageUrl] }))
+    setNewImageUrl('')
+  }
+
+  const removeImage = (index: number) => {
+    setPropertyForm(prev => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }))
+  }
+
   const handleGeocode = async () => {
     if (!propertyForm.address || !propertyForm.city) {
       setAdminError('Fyll i adress och stad först')
@@ -361,39 +346,42 @@ export default function AdminPage() {
       const res = await fetch(`/api/geocode?address=${encodeURIComponent(propertyForm.address)}&city=${encodeURIComponent(propertyForm.city)}`)
       const data = await res.json()
       if (data.lat && data.lon) {
-        setPropertyForm(prev => ({
-          ...prev,
-          latitude: String(data.lat),
-          longitude: String(data.lon),
-        }))
+        setPropertyForm(prev => ({ ...prev, latitude: String(data.lat), longitude: String(data.lon) }))
         showSuccess('Koordinater hittade!')
       } else {
         setAdminError(data.error || 'Kunde inte hitta koordinater')
       }
-    } catch {
-      setAdminError('Nätverksfel vid geokodning')
-    } finally {
-      setGeocoding(false)
-    }
+    } catch { setAdminError('Nätverksfel vid geokodning') }
+    finally { setGeocoding(false) }
   }
 
   const saveProperty = async () => {
     if (!propertyForm.title || !propertyForm.price) return alert('Titel och pris krävs')
-    const body: any = { ...propertyForm }
-    if (session?.user?.email) body.created_by = session.user.email
+    const body: any = {
+      ...propertyForm,
+      price: Number(propertyForm.price),
+      area: propertyForm.area ? Number(propertyForm.area) : null,
+      rooms: propertyForm.rooms ? Number(propertyForm.rooms) : null,
+      monthly_fee: propertyForm.monthly_fee ? Number(propertyForm.monthly_fee) : null,
+      operating_cost: propertyForm.operating_cost ? Number(propertyForm.operating_cost) : null,
+      latitude: propertyForm.latitude ? Number(propertyForm.latitude) : null,
+      longitude: propertyForm.longitude ? Number(propertyForm.longitude) : null,
+      created_by: session?.user?.email,
+      images: propertyForm.images.length > 0 ? propertyForm.images : (propertyForm.image_url ? [propertyForm.image_url] : [])
+    }
     const method = editingProperty ? 'PUT' : 'POST'
     if (editingProperty) body.id = editingProperty.id
 
     try {
       const res = await fetch('/api/properties', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({ error: 'Okänt fel' }))
-        throw new Error(errorData.error || errorData.message || 'Kunde inte spara')
+        const errData = await res.json().catch(() => ({ error: 'Okänt fel' }))
+        throw new Error(errData.error || errData.message || 'Kunde inte spara')
       }
       showSuccess(editingProperty ? 'Bostad uppdaterad!' : 'Bostad tillagd!')
       setShowPropertyForm(false)
       setEditingProperty(null)
-      setPropertyForm({ title: '', description: '', price: '', area: '', rooms: '', address: '', city: '', latitude: '', longitude: '', image_url: '', listing_url: '' })
+      setPropertyForm({ title: '', description: '', price: '', area: '', rooms: '', address: '', city: '', image_url: '', listing_url: '', latitude: '', longitude: '', monthly_fee: '', operating_cost: '', floor: '', elevator: false, balcony: false, images: [] })
       await fetchProperties()
     } catch (err: any) {
       setAdminError(err.message)
@@ -401,7 +389,7 @@ export default function AdminPage() {
   }
 
   const deleteProperty = async (id: number) => {
-    if (!confirm('Är du säker på att du vill ta bort denna bostad?')) return
+    if (!confirm('Ta bort bostad?')) return
     try {
       const res = await fetch(`/api/properties?id=${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Kunde inte ta bort')
@@ -446,16 +434,13 @@ export default function AdminPage() {
   if (status === 'loading' || loading) {
     return <div className="min-h-screen bg-slate-900 flex items-center justify-center"><p className="text-white animate-pulse">Laddar...</p></div>
   }
-
-  if (!session) {
-    return null
-  }
+  if (!session) return null
 
   return (
     <div className="min-h-screen bg-slate-900">
       {successMsg && (
         <div className="fixed top-4 right-4 z-50 bg-emerald-500/90 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-2">
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 13l4 4L19 7" /></svg>
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 13l4 4L19 7"/></svg>
           {successMsg}
         </div>
       )}
@@ -490,7 +475,7 @@ export default function AdminPage() {
             <h1 className="text-lg font-semibold text-white">
               {activeTab === 'overview' && 'Översikt'}
               {activeTab === 'emails' && 'Intresseanmälningar'}
-              {activeTab === 'admins' && 'Admin-användare'}
+              {activeTab === 'admins' && 'Admin‑användare'}
               {activeTab === 'newsletter' && 'Nyhetsbrev'}
               {activeTab === 'properties' && (isMaklare ? 'Mina bostäder' : 'Bostäder')}
             </h1>
@@ -628,7 +613,7 @@ export default function AdminPage() {
               </div>
             )}
 
-            {/* Bostäder (med geokodning) */}
+            {/* Bostäder (med bildhantering, geokodning, nya fält) */}
             {activeTab === 'properties' && (
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
@@ -636,91 +621,63 @@ export default function AdminPage() {
                     <h2 className="text-xl font-bold text-white">{isMaklare ? 'Mina bostäder' : 'Bostäder'}</h2>
                     <p className="text-slate-400 text-sm">{properties.length} st</p>
                   </div>
-                  <button onClick={() => { setEditingProperty(null); setPropertyForm({ title: '', description: '', price: '', area: '', rooms: '', address: '', city: '', latitude: '', longitude: '', image_url: '', listing_url: '' }); setShowPropertyForm(true) }} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm flex items-center gap-2"><Icons.add /> Lägg till bostad</button>
+                  <button onClick={() => { setEditingProperty(null); setPropertyForm({ title: '', description: '', price: '', area: '', rooms: '', address: '', city: '', image_url: '', listing_url: '', latitude: '', longitude: '', monthly_fee: '', operating_cost: '', floor: '', elevator: false, balcony: false, images: [] }); setShowPropertyForm(true) }} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm flex items-center gap-2"><Icons.add /> Lägg till bostad</button>
                 </div>
                 {showPropertyForm && (
                   <div className="bg-white/5 rounded-2xl border border-white/10 p-6">
                     <h3 className="text-lg font-semibold text-white mb-4">{editingProperty ? 'Redigera bostad' : 'Ny bostad'}</h3>
                     <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm text-slate-400 mb-1">Titel *</label>
-                        <input placeholder="t.ex. Modern lägenhet i city" value={propertyForm.title} onChange={e => setPropertyForm({ ...propertyForm, title: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                      <div><label className="block text-sm text-slate-400 mb-1">Titel *</label><input value={propertyForm.title} onChange={e => setPropertyForm({ ...propertyForm, title: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
+                      <div><label className="block text-sm text-slate-400 mb-1">Pris (kr) *</label><input type="number" value={propertyForm.price} onChange={e => setPropertyForm({ ...propertyForm, price: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
+                      <div><label className="block text-sm text-slate-400 mb-1">Area (m²)</label><input type="number" value={propertyForm.area} onChange={e => setPropertyForm({ ...propertyForm, area: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
+                      <div><label className="block text-sm text-slate-400 mb-1">Antal rum</label><input type="number" step="any" value={propertyForm.rooms} onChange={e => setPropertyForm({ ...propertyForm, rooms: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
+                      <div><label className="block text-sm text-slate-400 mb-1">Adress</label><input value={propertyForm.address} onChange={e => setPropertyForm({ ...propertyForm, address: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
+                      <div><label className="block text-sm text-slate-400 mb-1">Stad</label><input value={propertyForm.city} onChange={e => setPropertyForm({ ...propertyForm, city: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
+                      <div><label className="block text-sm text-slate-400 mb-1">Månadsavgift (kr)</label><input type="number" value={propertyForm.monthly_fee} onChange={e => setPropertyForm({ ...propertyForm, monthly_fee: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
+                      <div><label className="block text-sm text-slate-400 mb-1">Driftkostnad (kr/år)</label><input type="number" value={propertyForm.operating_cost} onChange={e => setPropertyForm({ ...propertyForm, operating_cost: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
+                      <div><label className="block text-sm text-slate-400 mb-1">Våning</label><input value={propertyForm.floor} onChange={e => setPropertyForm({ ...propertyForm, floor: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
+                      <div className="flex items-center gap-4">
+                        <label className="flex items-center gap-2 text-sm text-slate-400"><input type="checkbox" checked={propertyForm.elevator} onChange={e => setPropertyForm({ ...propertyForm, elevator: e.target.checked })} /> Hiss</label>
+                        <label className="flex items-center gap-2 text-sm text-slate-400"><input type="checkbox" checked={propertyForm.balcony} onChange={e => setPropertyForm({ ...propertyForm, balcony: e.target.checked })} /> Balkong</label>
                       </div>
-                      <div>
-                        <label className="block text-sm text-slate-400 mb-1">Pris (kr) *</label>
-                        <input type="number" placeholder="t.ex. 2500000" value={propertyForm.price} onChange={e => setPropertyForm({ ...propertyForm, price: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+
+                    {/* Bildhantering */}
+                    <div className="mt-6">
+                      <label className="block text-sm text-slate-400 mb-1">Bilder (URL:er) – klistra in och klicka Lägg till</label>
+                      <div className="flex gap-2 mb-2">
+                        <input placeholder="https://bild.se/bild.jpg" value={newImageUrl} onChange={e => setNewImageUrl(e.target.value)} className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        <button type="button" onClick={addImage} className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-medium">Lägg till</button>
                       </div>
-                      <div>
-                        <label className="block text-sm text-slate-400 mb-1">Area (m²)</label>
-                        <input type="number" placeholder="t.ex. 75" value={propertyForm.area} onChange={e => setPropertyForm({ ...propertyForm, area: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-slate-400 mb-1">Antal rum</label>
-                        <input type="number" step="any" placeholder="t.ex. 3" value={propertyForm.rooms} onChange={e => setPropertyForm({ ...propertyForm, rooms: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-slate-400 mb-1">Adress</label>
-                        <input placeholder="t.ex. Storgatan 1" value={propertyForm.address} onChange={e => setPropertyForm({ ...propertyForm, address: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-slate-400 mb-1">Stad</label>
-                        <input placeholder="t.ex. Stockholm" value={propertyForm.city} onChange={e => setPropertyForm({ ...propertyForm, city: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                      </div>
+                      {propertyForm.images.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {propertyForm.images.map((url, idx) => (
+                            <div key={idx} className="relative group">
+                              <img src={url} alt={`bild ${idx+1}`} className="h-20 w-20 object-cover rounded-lg border border-white/10" />
+                              <button onClick={() => removeImage(idx)} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition">×</button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     {/* Geokodning */}
                     <div className="mt-4 flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={handleGeocode}
-                        disabled={geocoding}
-                        className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-sm font-medium transition flex items-center gap-2"
-                      >
-                        {geocoding ? (
-                          <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="31.4" strokeDashoffset="10" />
-                          </svg>
-                        ) : (
-                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="12" cy="12" r="9" />
-                            <polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9" />
-                          </svg>
-                        )}
+                      <button type="button" onClick={handleGeocode} disabled={geocoding} className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-sm font-medium transition flex items-center gap-2">
+                        {geocoding ? (<svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="31.4" strokeDashoffset="10"/></svg>) : (<svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9"/><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>)}
                         Hitta koordinater
                       </button>
-                      {propertyForm.latitude && propertyForm.longitude && (
-                        <span className="text-emerald-400 text-xs bg-emerald-400/10 px-2 py-1 rounded-full flex items-center gap-1">
-                          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 13l4 4L19 7" /></svg>
-                          Koordinater hittade
-                        </span>
-                      )}
-                      {!propertyForm.latitude && !propertyForm.longitude && (
-                        <span className="text-slate-500 text-xs">Fyll i adress och stad och klicka för att automatiskt hämta koordinater</span>
-                      )}
-                    </div>
-
-                    <div className="grid sm:grid-cols-2 gap-4 mt-4">
-                      <div>
-                        <label className="block text-sm text-slate-400 mb-1">Bild-URL</label>
-                        <input placeholder="https://..." value={propertyForm.image_url} onChange={e => setPropertyForm({ ...propertyForm, image_url: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-slate-400 mb-1">Annons-URL</label>
-                        <input placeholder="https://..." value={propertyForm.listing_url} onChange={e => setPropertyForm({ ...propertyForm, listing_url: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                      </div>
+                      {propertyForm.latitude && propertyForm.longitude && <span className="text-emerald-400 text-xs bg-emerald-400/10 px-2 py-1 rounded-full flex items-center gap-1"><svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 13l4 4L19 7"/></svg> Hittad</span>}
                     </div>
 
                     <div className="flex gap-3 mt-6">
                       <button onClick={saveProperty} className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium">Spara</button>
                       <button onClick={() => { setShowPropertyForm(false); setEditingProperty(null) }} className="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl">Avbryt</button>
                     </div>
-                    {adminError && (
-                      <div className="mt-3 bg-red-500/10 border border-red-500/20 rounded-xl p-3">
-                        <p className="text-red-300 text-sm">{adminError}</p>
-                      </div>
-                    )}
+                    {adminError && <div className="mt-3 bg-red-500/10 border border-red-500/20 rounded-xl p-3"><p className="text-red-300 text-sm">{adminError}</p></div>}
                   </div>
                 )}
+
                 <div className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
                   {properties.length === 0 ? (
                     <div className="p-12 text-center"><p className="text-slate-400">Inga bostäder tillagda ännu</p></div>
@@ -733,10 +690,8 @@ export default function AdminPage() {
                           <td className="py-3.5 px-6 text-blue-400 text-sm">{new Intl.NumberFormat('sv-SE').format(p.price)} kr</td>
                           <td className="py-3.5 px-6 text-slate-400 text-sm hidden sm:table-cell">{p.city}</td>
                           <td className="py-3.5 px-6 text-right">
-                            <div className="flex justify-end gap-1">
-                              <button onClick={() => { setEditingProperty(p); setPropertyForm({ title: p.title, description: p.description || '', price: String(p.price), area: p.area ? String(p.area) : '', rooms: p.rooms ? String(p.rooms) : '', address: p.address || '', city: p.city || '', latitude: p.latitude ? String(p.latitude) : '', longitude: p.longitude ? String(p.longitude) : '', image_url: p.image_url || '', listing_url: p.listing_url || '' }); setShowPropertyForm(true) }} className="text-amber-400 hover:text-amber-300 p-1"><Icons.edit /></button>
-                              <button onClick={() => deleteProperty(p.id)} className="text-red-400 hover:text-red-300 p-1"><Icons.delete /></button>
-                            </div>
+                            <button onClick={() => { setEditingProperty(p); setPropertyForm({ title: p.title, description: p.description || '', price: String(p.price), area: p.area ? String(p.area) : '', rooms: p.rooms ? String(p.rooms) : '', address: p.address || '', city: p.city || '', image_url: p.image_url || '', listing_url: p.listing_url || '', latitude: p.latitude ? String(p.latitude) : '', longitude: p.longitude ? String(p.longitude) : '', monthly_fee: p.monthly_fee ? String(p.monthly_fee) : '', operating_cost: p.operating_cost ? String(p.operating_cost) : '', floor: p.floor || '', elevator: p.elevator || false, balcony: p.balcony || false, images: p.images || [] }); setShowPropertyForm(true) }} className="text-amber-400 hover:text-amber-300 p-1"><Icons.edit /></button>
+                            <button onClick={() => deleteProperty(p.id)} className="text-red-400 hover:text-red-300 p-1 ml-1"><Icons.delete /></button>
                           </td>
                         </tr>
                       ))}</tbody>

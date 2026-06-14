@@ -13,6 +13,7 @@ interface AdminUser {
   role: string
 }
 
+// Hämta alla admin-användare
 export async function GET(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
   if (!token || token.role !== 'admin') {
@@ -38,11 +39,12 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ admins })
   } catch (error) {
-    console.error(error)
+    console.error('GET error:', error)
     return NextResponse.json({ error: 'Kunde inte hämta admin-användare' }, { status: 500 })
   }
 }
 
+// Lägg till ny admin-användare
 export async function POST(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
   if (!token || token.role !== 'admin') {
@@ -50,14 +52,15 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { email, password, role } = await request.json()
+    const body = await request.json()
+    const { email, password, role } = body
 
     if (!email || !email.includes('@')) {
       return NextResponse.json({ error: 'Ogiltig e-postadress' }, { status: 400 })
     }
 
     const cleanEmail = email.toLowerCase().trim()
-    const insertData: Record<string, any> = {
+    const insertData: any = {
       email: cleanEmail,
       added_by: token.email as string,
       role: role || 'admin',
@@ -84,21 +87,86 @@ export async function POST(request: NextRequest) {
       throw error
     }
 
+    const admin = data as AdminUser
     return NextResponse.json({
       success: true,
       admin: {
-        id: data.id,
-        email: data.email,
-        created_at: data.created_at,
-        added_by: data.added_by,
-        has_password: !!data.password_hash,
-        role: data.role || 'admin',
-      }
+        id: admin.id,
+        email: admin.email,
+        created_at: admin.created_at,
+        added_by: admin.added_by,
+        has_password: !!admin.password_hash,
+        role: admin.role,
+      },
     })
   } catch (error) {
-    console.error(error)
+    console.error('POST error:', error)
     return NextResponse.json({ error: 'Kunde inte lägga till admin' }, { status: 500 })
   }
 }
 
-// DELETE och PUT är oförändrade, men du kan kopiera från din befintliga route.ts
+// Ta bort admin-användare
+export async function DELETE(request: NextRequest) {
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+  if (!token || token.role !== 'admin') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
+    const { id } = await request.json()
+    if (!id) {
+      return NextResponse.json({ error: 'ID saknas' }, { status: 400 })
+    }
+
+    // Förhindra att man tar bort sig själv
+    const { data: userToDelete } = await supabaseAdmin
+      .from('admin_users')
+      .select('email')
+      .eq('id', id)
+      .single()
+
+    if (userToDelete && (userToDelete as any).email === token.email) {
+      return NextResponse.json({ error: 'Du kan inte ta bort dig själv' }, { status: 400 })
+    }
+
+    const { error } = await supabaseAdmin
+      .from('admin_users')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('DELETE error:', error)
+    return NextResponse.json({ error: 'Kunde inte ta bort admin' }, { status: 500 })
+  }
+}
+
+// Uppdatera lösenord (behåll din PUT från tidigare om den fungerar, annars använd denna)
+export async function PUT(request: NextRequest) {
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+  if (!token || token.role !== 'admin') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
+    const { id, password } = await request.json()
+    if (!id || !password || password.length < 6) {
+      return NextResponse.json({ error: 'ID och lösenord (minst 6 tecken) krävs' }, { status: 400 })
+    }
+
+    const salt = await bcrypt.genSalt(10)
+    const password_hash = await bcrypt.hash(password, salt)
+
+    const { error } = await supabaseAdmin
+      .from('admin_users')
+      .update({ password_hash })
+      .eq('id', id)
+
+    if (error) throw error
+    return NextResponse.json({ success: true, message: 'Lösenord uppdaterat' })
+  } catch (error) {
+    console.error('PUT error:', error)
+    return NextResponse.json({ error: 'Kunde inte uppdatera lösenord' }, { status: 500 })
+  }
+}
