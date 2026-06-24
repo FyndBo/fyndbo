@@ -9,7 +9,8 @@ export default function Home() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 
   useEffect(() => {
-    const launchDate = new Date(2026, 5, 24, 10, 0, 0)
+    // Ändrat till 31 juli 2026 kl. 10:00
+    const launchDate = new Date(2026, 6, 31, 10, 0, 0)
 
     const timer = setInterval(() => {
       const now = new Date()
@@ -23,7 +24,7 @@ export default function Home() {
 
       setTimeLeft({
         days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff % (86400000)) / 3600000),
+        hours: Math.floor((diff % 86400000) / 3600000),
         minutes: Math.floor((diff % 3600000) / 60000),
         seconds: Math.floor((diff % 60000) / 1000),
       })
@@ -66,7 +67,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
-      {/* Bakgrundsdekorationer - samma som om-sidan */}
+      {/* Bakgrundsdekorationer */}
       <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-10 right-10 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
@@ -74,7 +75,7 @@ export default function Home() {
       </div>
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-        {/* Logga - MAXIMAL storlek */}
+        {/* Logga */}
         <div className="flex justify-center pt-2 pb-3 sm:pt-4 sm:pb-6">
           <img 
             src="/Fyndbo-blue-bkg.png" 
@@ -89,7 +90,7 @@ export default function Home() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
             </span>
-            <span className="text-[10px] sm:text-xs text-gray-300 tracking-wide">Lanseras 24 juni 2026</span>
+            <span className="text-[10px] sm:text-xs text-gray-300 tracking-wide">Lanseras 31 juli 2026</span>
           </div>
           
           <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-3 sm:mb-4 leading-[1.1] tracking-tight">
