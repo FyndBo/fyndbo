@@ -123,11 +123,18 @@ export default function MapComponent({ properties, hoveredId, mapExpanded }: Map
       maxBounds={[[35, -20], [72, 50]]}
       maxBoundsViscosity={1.0}
     >
-      {/* Din personliga MapTiler-karta */}
+      {/* Klassisk OpenStreetMap – pålitlig och gratis */}
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      />
+
+      {/* Din MapTiler-karta (aktivera senare om du vill)
       <TileLayer
         url="https://api.maptiler.com/maps/019f33bb-4ad8-76da-847a-124275c06bcf/style.json?key=pyfLqHxAveCHK2gF0LvF"
         attribution='&copy; <a href="https://www.maptiler.com/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       />
+      */}
 
       {/* Mörk overlay med dämpad kontur */}
       {swedenMask && (
