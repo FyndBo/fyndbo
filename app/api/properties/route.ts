@@ -81,30 +81,10 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const {
-      title,
-      description,
-      price,
-      area,
-      rooms,
-      address,
-      city,
-      postal_code,
-      image_url,
-      listing_url,
-      latitude,
-      longitude,
-      created_by,
-      monthly_fee,
-      operating_cost,
-      floor,
-      elevator,
-      balcony,
-      images,
-      property_type,
-      construction_year,
-      plot_area,
-      energy_class,
-      association,
+      title, description, price, area, rooms, address, city, postal_code,
+      image_url, listing_url, latitude, longitude, created_by,
+      monthly_fee, operating_cost, floor, elevator, balcony, images,
+      property_type, construction_year, plot_area, energy_class, association
     } = body
 
     if (!title || !price) {
@@ -113,14 +93,9 @@ export async function POST(request: NextRequest) {
 
     let lat = latitude ? parseFloat(latitude) : null
     let lng = longitude ? parseFloat(longitude) : null
-
-    // Geokoda med postnummer om koordinater saknas
     if ((!lat || !lng) && address && city) {
       const coords = await geocodeAddress(address, city, postal_code)
-      if (coords) {
-        lat = coords.lat
-        lng = coords.lon
-      }
+      if (coords) { lat = coords.lat; lng = coords.lon }
     }
 
     const insertData: any = {
@@ -142,7 +117,7 @@ export async function POST(request: NextRequest) {
       floor: floor || null,
       elevator: elevator === true || elevator === 'true',
       balcony: balcony === true || balcony === 'true',
-      images: images && Array.isArray(images) ? images : image_url ? [image_url] : [],
+      images: Array.isArray(images) ? images : image_url ? [image_url] : [],
       property_type: property_type || null,
       construction_year: construction_year ? parseInt(construction_year) : null,
       plot_area: plot_area ? parseInt(plot_area) : null,
@@ -214,7 +189,6 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    // Geokoda om adress och stad finns men koordinater saknas
     if (
       (!updates.latitude || !updates.longitude) &&
       updates.address &&

@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -144,9 +144,7 @@ const Icons = {
   ),
 }
 
-// ============================================================
 // Nyhetsbrevsmallar (premium)
-// ============================================================
 const newsletterTemplates = {
   welcome: {
     name: 'Välkommen',
@@ -207,7 +205,7 @@ export default function AdminPage() {
   const [editingProperty, setEditingProperty] = useState<Property | null>(null)
   const [propertyForm, setPropertyForm] = useState({
     title: '', description: '', price: '', area: '', rooms: '',
-    address: '', city: '', postal_code: '',  // ← Postnummer tillagt
+    address: '', city: '', postal_code: '',
     image_url: '', listing_url: '',
     latitude: '', longitude: '',
     monthly_fee: '', operating_cost: '', floor: '',
@@ -267,7 +265,6 @@ export default function AdminPage() {
     } catch (err) { console.error(err) }
   }
 
-  // Användarhantering
   const addAdmin = async () => {
     setAdminError('')
     if (!newAdminEmail || !newAdminEmail.includes('@')) { setAdminError('Ange en giltig e-postadress'); return }
@@ -347,7 +344,6 @@ export default function AdminPage() {
     link.click()
   }
 
-  // Bildhantering
   const addImage = () => {
     if (!newImageUrl) return
     setPropertyForm(prev => ({ ...prev, images: [...prev.images, newImageUrl] }))
@@ -482,7 +478,6 @@ export default function AdminPage() {
       )}
 
       <div className="flex min-h-screen">
-        {/* Sidobar */}
         <aside className="hidden lg:flex flex-col w-72 bg-slate-800/70 border-r border-white/5 p-6">
           <div className="mb-10">
             <img src="https://fyndbo.se/Fyndbo-blue-bkg.png" alt="FyndBo" className="h-56 w-auto mx-auto" />
@@ -505,7 +500,6 @@ export default function AdminPage() {
           </div>
         </aside>
 
-        {/* Huvudinnehåll */}
         <div className="flex-1 flex flex-col min-w-0">
           <header className="hidden lg:flex items-center justify-between px-8 py-4 bg-slate-800/50 border-b border-white/5">
             <h1 className="text-lg font-semibold text-white">
@@ -664,7 +658,7 @@ export default function AdminPage() {
               </div>
             )}
 
-            {/* Bostäder – med alla nya fält */}
+            {/* Bostäder */}
             {activeTab === 'properties' && (
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
@@ -777,28 +771,17 @@ export default function AdminPage() {
                             <button onClick={() => {
                               setEditingProperty(p);
                               setPropertyForm({
-                                title: p.title,
-                                description: p.description || '',
-                                price: String(p.price),
-                                area: p.area ? String(p.area) : '',
-                                rooms: p.rooms ? String(p.rooms) : '',
-                                address: p.address || '',
-                                city: p.city || '',
-                                postal_code: p.postal_code || '',
-                                image_url: p.image_url || '',
-                                listing_url: p.listing_url || '',
-                                latitude: p.latitude ? String(p.latitude) : '',
-                                longitude: p.longitude ? String(p.longitude) : '',
+                                title: p.title, description: p.description || '', price: String(p.price),
+                                area: p.area ? String(p.area) : '', rooms: p.rooms ? String(p.rooms) : '',
+                                address: p.address || '', city: p.city || '', postal_code: p.postal_code || '',
+                                image_url: p.image_url || '', listing_url: p.listing_url || '',
+                                latitude: p.latitude ? String(p.latitude) : '', longitude: p.longitude ? String(p.longitude) : '',
                                 monthly_fee: p.monthly_fee ? String(p.monthly_fee) : '',
                                 operating_cost: p.operating_cost ? String(p.operating_cost) : '',
-                                floor: p.floor || '',
-                                elevator: p.elevator || false,
-                                balcony: p.balcony || false,
+                                floor: p.floor || '', elevator: p.elevator || false, balcony: p.balcony || false,
                                 images: p.images || [],
-                                property_type: p.property_type || '',
-                                construction_year: p.construction_year ? String(p.construction_year) : '',
-                                plot_area: p.plot_area ? String(p.plot_area) : '',
-                                energy_class: p.energy_class || '',
+                                property_type: p.property_type || '', construction_year: p.construction_year ? String(p.construction_year) : '',
+                                plot_area: p.plot_area ? String(p.plot_area) : '', energy_class: p.energy_class || '',
                                 association: p.association || ''
                               });
                               setShowPropertyForm(true);
