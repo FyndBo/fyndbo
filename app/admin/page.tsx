@@ -18,6 +18,7 @@ interface Property {
   rooms: number | null
   city: string | null
   address: string | null
+  postal_code?: string | null
   image_url: string | null
   listing_url: string | null
   latitude: number | null
@@ -30,10 +31,15 @@ interface Property {
   elevator?: boolean
   balcony?: boolean
   images?: string[]
+  property_type?: string | null
+  construction_year?: number | null
+  plot_area?: number | null
+  energy_class?: string | null
+  association?: string | null
 }
 
 // ============================================================
-// Ikoner (fullständiga, inga emojis)
+// Ikoner (egna SVG, inga emojis)
 // ============================================================
 const Icons = {
   dashboard: () => (
@@ -138,9 +144,7 @@ const Icons = {
   ),
 }
 
-// ============================================================
-// Nyhetsbrevsmallar (premium)
-// ============================================================
+// Nyhetsbrevsmallar (premium) – samma som tidigare
 const newsletterTemplates = {
   welcome: {
     name: 'Välkommen',
@@ -164,9 +168,6 @@ const newsletterTemplates = {
   }
 }
 
-// ============================================================
-// Huvudkomponent
-// ============================================================
 export default function AdminPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -204,11 +205,14 @@ export default function AdminPage() {
   const [editingProperty, setEditingProperty] = useState<Property | null>(null)
   const [propertyForm, setPropertyForm] = useState({
     title: '', description: '', price: '', area: '', rooms: '',
-    address: '', city: '', image_url: '', listing_url: '',
+    address: '', city: '', postal_code: '',  // ← Postnummer tillagt
+    image_url: '', listing_url: '',
     latitude: '', longitude: '',
     monthly_fee: '', operating_cost: '', floor: '',
     elevator: false, balcony: false,
-    images: [] as string[]
+    images: [] as string[],
+    property_type: '', construction_year: '', plot_area: '',
+    energy_class: '', association: ''
   })
   const [newImageUrl, setNewImageUrl] = useState('')
   const [geocoding, setGeocoding] = useState(false)
@@ -360,7 +364,9 @@ export default function AdminPage() {
     setGeocoding(true)
     setAdminError('')
     try {
-      const res = await fetch(`/api/geocode?address=${encodeURIComponent(propertyForm.address)}&city=${encodeURIComponent(propertyForm.city)}`)
+      const res = await fetch(
+        `/api/geocode?address=${encodeURIComponent(propertyForm.address)}&city=${encodeURIComponent(propertyForm.city)}&postal_code=${encodeURIComponent(propertyForm.postal_code)}`
+      )
       const data = await res.json()
       if (data.lat && data.lon) {
         setPropertyForm(prev => ({ ...prev, latitude: String(data.lat), longitude: String(data.lon) }))
@@ -384,7 +390,9 @@ export default function AdminPage() {
       latitude: propertyForm.latitude ? Number(propertyForm.latitude) : null,
       longitude: propertyForm.longitude ? Number(propertyForm.longitude) : null,
       created_by: session?.user?.email,
-      images: propertyForm.images.length > 0 ? propertyForm.images : (propertyForm.image_url ? [propertyForm.image_url] : [])
+      images: propertyForm.images.length > 0 ? propertyForm.images : (propertyForm.image_url ? [propertyForm.image_url] : []),
+      construction_year: propertyForm.construction_year ? Number(propertyForm.construction_year) : null,
+      plot_area: propertyForm.plot_area ? Number(propertyForm.plot_area) : null,
     }
     const method = editingProperty ? 'PUT' : 'POST'
     if (editingProperty) body.id = editingProperty.id
@@ -398,7 +406,16 @@ export default function AdminPage() {
       showSuccess(editingProperty ? 'Bostad uppdaterad!' : 'Bostad tillagd!')
       setShowPropertyForm(false)
       setEditingProperty(null)
-      setPropertyForm({ title: '', description: '', price: '', area: '', rooms: '', address: '', city: '', image_url: '', listing_url: '', latitude: '', longitude: '', monthly_fee: '', operating_cost: '', floor: '', elevator: false, balcony: false, images: [] })
+      setPropertyForm({
+        title: '', description: '', price: '', area: '', rooms: '',
+        address: '', city: '', postal_code: '',
+        image_url: '', listing_url: '',
+        latitude: '', longitude: '',
+        monthly_fee: '', operating_cost: '', floor: '',
+        elevator: false, balcony: false, images: [],
+        property_type: '', construction_year: '', plot_area: '',
+        energy_class: '', association: ''
+      })
       await fetchProperties()
     } catch (err: any) {
       setAdminError(err.message)
@@ -466,7 +483,7 @@ export default function AdminPage() {
         {/* Sidobar */}
         <aside className="hidden lg:flex flex-col w-72 bg-slate-800/70 border-r border-white/5 p-6">
           <div className="mb-10">
-            <img src="https://fyndbo.se/Fyndbo-blue-bkg.png" alt="FyndBo" className="h-48 w-auto mx-auto" />
+            <img src="https://fyndbo.se/Fyndbo-blue-bkg.png" alt="FyndBo" className="h-56 w-auto mx-auto" />
             <p className="text-slate-500 text-xs text-center mt-2">Dashboard</p>
           </div>
           <nav className="flex flex-col gap-1 flex-1">
@@ -645,7 +662,7 @@ export default function AdminPage() {
               </div>
             )}
 
-            {/* Bostäder (med bildhantering, geokodning, nya fält) */}
+            {/* Bostäder – med postnummer och alla nya fält */}
             {activeTab === 'properties' && (
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
@@ -653,8 +670,18 @@ export default function AdminPage() {
                     <h2 className="text-xl font-bold text-white">{isMaklare ? 'Mina bostäder' : 'Bostäder'}</h2>
                     <p className="text-slate-400 text-sm">{properties.length} st</p>
                   </div>
-                  <button onClick={() => { setEditingProperty(null); setPropertyForm({ title: '', description: '', price: '', area: '', rooms: '', address: '', city: '', image_url: '', listing_url: '', latitude: '', longitude: '', monthly_fee: '', operating_cost: '', floor: '', elevator: false, balcony: false, images: [] }); setShowPropertyForm(true) }} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm flex items-center gap-2"><Icons.add /> Lägg till bostad</button>
+                  <button onClick={() => { setEditingProperty(null); setPropertyForm({
+                    title: '', description: '', price: '', area: '', rooms: '',
+                    address: '', city: '', postal_code: '',
+                    image_url: '', listing_url: '',
+                    latitude: '', longitude: '',
+                    monthly_fee: '', operating_cost: '', floor: '',
+                    elevator: false, balcony: false, images: [],
+                    property_type: '', construction_year: '', plot_area: '',
+                    energy_class: '', association: ''
+                  }); setShowPropertyForm(true) }} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm flex items-center gap-2"><Icons.add /> Lägg till bostad</button>
                 </div>
+
                 {showPropertyForm && (
                   <div className="bg-white/5 rounded-2xl border border-white/10 p-6">
                     <h3 className="text-lg font-semibold text-white mb-4">{editingProperty ? 'Redigera bostad' : 'Ny bostad'}</h3>
@@ -664,10 +691,33 @@ export default function AdminPage() {
                       <div><label className="block text-sm text-slate-400 mb-1">Area (m²)</label><input type="number" value={propertyForm.area} onChange={e => setPropertyForm({ ...propertyForm, area: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
                       <div><label className="block text-sm text-slate-400 mb-1">Antal rum</label><input type="number" step="any" value={propertyForm.rooms} onChange={e => setPropertyForm({ ...propertyForm, rooms: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
                       <div><label className="block text-sm text-slate-400 mb-1">Adress</label><input value={propertyForm.address} onChange={e => setPropertyForm({ ...propertyForm, address: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
+                      <div><label className="block text-sm text-slate-400 mb-1">Postnummer</label><input value={propertyForm.postal_code} onChange={e => setPropertyForm({ ...propertyForm, postal_code: e.target.value })} placeholder="t.ex. 12345" className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
                       <div><label className="block text-sm text-slate-400 mb-1">Stad</label><input value={propertyForm.city} onChange={e => setPropertyForm({ ...propertyForm, city: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
                       <div><label className="block text-sm text-slate-400 mb-1">Månadsavgift (kr)</label><input type="number" value={propertyForm.monthly_fee} onChange={e => setPropertyForm({ ...propertyForm, monthly_fee: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
                       <div><label className="block text-sm text-slate-400 mb-1">Driftkostnad (kr/år)</label><input type="number" value={propertyForm.operating_cost} onChange={e => setPropertyForm({ ...propertyForm, operating_cost: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
                       <div><label className="block text-sm text-slate-400 mb-1">Våning</label><input value={propertyForm.floor} onChange={e => setPropertyForm({ ...propertyForm, floor: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
+                      <div>
+                        <label className="block text-sm text-slate-400 mb-1">Bostadstyp</label>
+                        <select value={propertyForm.property_type} onChange={e => setPropertyForm({ ...propertyForm, property_type: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                          <option value="">Välj...</option>
+                          <option value="villa">Villa</option>
+                          <option value="lägenhet">Lägenhet</option>
+                          <option value="radhus">Radhus</option>
+                          <option value="fritidshus">Fritidshus</option>
+                          <option value="tomt">Tomt</option>
+                          <option value="gård">Gård/Skog</option>
+                        </select>
+                      </div>
+                      <div><label className="block text-sm text-slate-400 mb-1">Byggår</label><input type="number" value={propertyForm.construction_year} onChange={e => setPropertyForm({ ...propertyForm, construction_year: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
+                      <div><label className="block text-sm text-slate-400 mb-1">Tomtarea (m²)</label><input type="number" value={propertyForm.plot_area} onChange={e => setPropertyForm({ ...propertyForm, plot_area: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
+                      <div>
+                        <label className="block text-sm text-slate-400 mb-1">Energiklass</label>
+                        <select value={propertyForm.energy_class} onChange={e => setPropertyForm({ ...propertyForm, energy_class: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                          <option value="">Välj...</option>
+                          {['A','B','C','D','E','F','G'].map(cls => (<option key={cls} value={cls}>{cls}</option>))}
+                        </select>
+                      </div>
+                      <div><label className="block text-sm text-slate-400 mb-1">Förening</label><input value={propertyForm.association} onChange={e => setPropertyForm({ ...propertyForm, association: e.target.value })} className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" /></div>
                       <div className="flex items-center gap-4">
                         <label className="flex items-center gap-2 text-sm text-slate-400"><input type="checkbox" checked={propertyForm.elevator} onChange={e => setPropertyForm({ ...propertyForm, elevator: e.target.checked })} /> Hiss</label>
                         <label className="flex items-center gap-2 text-sm text-slate-400"><input type="checkbox" checked={propertyForm.balcony} onChange={e => setPropertyForm({ ...propertyForm, balcony: e.target.checked })} /> Balkong</label>
@@ -722,7 +772,35 @@ export default function AdminPage() {
                           <td className="py-3.5 px-6 text-blue-400 text-sm">{new Intl.NumberFormat('sv-SE').format(p.price)} kr</td>
                           <td className="py-3.5 px-6 text-slate-400 text-sm hidden sm:table-cell">{p.city}</td>
                           <td className="py-3.5 px-6 text-right">
-                            <button onClick={() => { setEditingProperty(p); setPropertyForm({ title: p.title, description: p.description || '', price: String(p.price), area: p.area ? String(p.area) : '', rooms: p.rooms ? String(p.rooms) : '', address: p.address || '', city: p.city || '', image_url: p.image_url || '', listing_url: p.listing_url || '', latitude: p.latitude ? String(p.latitude) : '', longitude: p.longitude ? String(p.longitude) : '', monthly_fee: p.monthly_fee ? String(p.monthly_fee) : '', operating_cost: p.operating_cost ? String(p.operating_cost) : '', floor: p.floor || '', elevator: p.elevator || false, balcony: p.balcony || false, images: p.images || [] }); setShowPropertyForm(true) }} className="text-amber-400 hover:text-amber-300 p-1"><Icons.edit /></button>
+                            <button onClick={() => {
+                              setEditingProperty(p);
+                              setPropertyForm({
+                                title: p.title,
+                                description: p.description || '',
+                                price: String(p.price),
+                                area: p.area ? String(p.area) : '',
+                                rooms: p.rooms ? String(p.rooms) : '',
+                                address: p.address || '',
+                                city: p.city || '',
+                                postal_code: p.postal_code || '',
+                                image_url: p.image_url || '',
+                                listing_url: p.listing_url || '',
+                                latitude: p.latitude ? String(p.latitude) : '',
+                                longitude: p.longitude ? String(p.longitude) : '',
+                                monthly_fee: p.monthly_fee ? String(p.monthly_fee) : '',
+                                operating_cost: p.operating_cost ? String(p.operating_cost) : '',
+                                floor: p.floor || '',
+                                elevator: p.elevator || false,
+                                balcony: p.balcony || false,
+                                images: p.images || [],
+                                property_type: p.property_type || '',
+                                construction_year: p.construction_year ? String(p.construction_year) : '',
+                                plot_area: p.plot_area ? String(p.plot_area) : '',
+                                energy_class: p.energy_class || '',
+                                association: p.association || ''
+                              });
+                              setShowPropertyForm(true);
+                            }} className="text-amber-400 hover:text-amber-300 p-1"><Icons.edit /></button>
                             <button onClick={() => deleteProperty(p.id)} className="text-red-400 hover:text-red-300 p-1 ml-1"><Icons.delete /></button>
                           </td>
                         </tr>

@@ -5,12 +5,18 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const address = searchParams.get('address')
   const city = searchParams.get('city')
+  const postal_code = searchParams.get('postal_code')
 
   if (!address || !city) {
     return NextResponse.json({ error: 'Adress och stad krävs' }, { status: 400 })
   }
 
-  const query = encodeURIComponent(`${address}, ${city}, Sweden`)
+  // Bygg söksträng med postnummer om det finns
+  const parts = [address]
+  if (postal_code) parts.push(postal_code)
+  parts.push(city, 'Sweden')
+  const query = encodeURIComponent(parts.join(', '))
+
   const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`
 
   try {

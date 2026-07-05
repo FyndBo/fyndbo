@@ -3,17 +3,31 @@ import { NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import type { NextRequest } from 'next/server'
 
-// Hjälpfunktion för server‑side geokodning
-async function geocodeAddress(address: string, city: string): Promise<{ lat: number; lon: number } | null> {
+// ============================================================
+// Hjälpfunktion – servergeokodning med postnummer
+// ============================================================
+async function geocodeAddress(
+  address: string,
+  city: string,
+  postalCode?: string
+): Promise<{ lat: number; lon: number } | null> {
   try {
-    const query = encodeURIComponent(`${address}, ${city}, Sweden`)
+    const parts = [address]
+    if (postalCode) parts.push(postalCode)
+    if (city) parts.push(city)
+    parts.push('Sweden')
+    const query = encodeURIComponent(parts.join(', '))
     const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`
+
     const res = await fetch(url, {
-      headers: { 'User-Agent': 'FyndBo/1.0 (nyhetsbrev@fyndbo.se)' },
+      headers: { 'User-Agent': 'FyndBo/1.0' },
     })
     const data = await res.json()
     if (data && data.length > 0) {
-      return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) }
+      return {
+        lat: parseFloat(data[0].lat),
+        lon: parseFloat(data[0].lon),
+      }
     }
   } catch (error) {
     console.error('Server‑geokodning misslyckades:', error)
@@ -21,6 +35,9 @@ async function geocodeAddress(address: string, city: string): Promise<{ lat: num
   return null
 }
 
+// ============================================================
+// GET – hämta alla aktiva bostäder (publik)
+// ============================================================
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
@@ -34,7 +51,9 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
 
     if (search) {
-      query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%,address.ilike.%${search}%,city.ilike.%${search}%`)
+      query = query.or(
+        `title.ilike.%${search}%,description.ilike.%${search}%,address.ilike.%${search}%,city.ilike.%${search}%,postal_code.ilike.%${search}%`
+      )
     }
     if (city) {
       query = query.ilike('city', `%${city}%`)
@@ -50,6 +69,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// ============================================================
+// POST – skapa bostad (admin/mäklare)
+// ============================================================
 export async function POST(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
   if (!token || !token.role) {
@@ -58,10 +80,31 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    let {
-      title, description, price, area, rooms, address, city,
-      image_url, listing_url, latitude, longitude, created_by,
-      monthly_fee, operating_cost, floor, elevator, balcony, images
+    const {
+      title,
+      description,
+      price,
+      area,
+      rooms,
+      address,
+      city,
+      postal_code,
+      image_url,
+      listing_url,
+      latitude,
+      longitude,
+      created_by,
+      monthly_fee,
+      operating_cost,
+      floor,
+      elevator,
+      balcony,
+      images,
+      property_type,
+      construction_year,
+      plot_area,
+      energy_class,
+      association,
     } = body
 
     if (!title || !price) {
@@ -70,8 +113,10 @@ export async function POST(request: NextRequest) {
 
     let lat = latitude ? parseFloat(latitude) : null
     let lng = longitude ? parseFloat(longitude) : null
+
+    // Geokoda med postnummer om koordinater saknas
     if ((!lat || !lng) && address && city) {
-      const coords = await geocodeAddress(address, city)
+      const coords = await geocodeAddress(address, city, postal_code)
       if (coords) {
         lat = coords.lat
         lng = coords.lon
@@ -86,6 +131,7 @@ export async function POST(request: NextRequest) {
       rooms: rooms ? parseFloat(rooms) : null,
       address: address || null,
       city: city || null,
+      postal_code: postal_code || null,
       image_url: image_url || null,
       listing_url: listing_url || null,
       latitude: lat,
@@ -96,7 +142,12 @@ export async function POST(request: NextRequest) {
       floor: floor || null,
       elevator: elevator === true || elevator === 'true',
       balcony: balcony === true || balcony === 'true',
-      images: images && Array.isArray(images) ? images : (image_url ? [image_url] : [])
+      images: images && Array.isArray(images) ? images : image_url ? [image_url] : [],
+      property_type: property_type || null,
+      construction_year: construction_year ? parseInt(construction_year) : null,
+      plot_area: plot_area ? parseInt(plot_area) : null,
+      energy_class: energy_class || null,
+      association: association || null,
     }
 
     const { data, error } = await supabaseAdmin
@@ -114,6 +165,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// ============================================================
+// PUT – uppdatera bostad (admin/mäklare)
+// ============================================================
 export async function PUT(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
   if (!token || !token.role) {
@@ -125,16 +179,24 @@ export async function PUT(request: NextRequest) {
     const { id } = body
     if (!id) return NextResponse.json({ error: 'ID krävs' }, { status: 400 })
 
-    // Bygg uppdateringsobjekt dynamiskt
     const updates: Record<string, any> = {}
-    const fields = ['title','description','price','area','rooms','address','city','image_url','listing_url','latitude','longitude','monthly_fee','operating_cost','floor','elevator','balcony','images']
+    const fields = [
+      'title', 'description', 'price', 'area', 'rooms', 'address', 'city',
+      'postal_code', 'image_url', 'listing_url', 'latitude', 'longitude',
+      'monthly_fee', 'operating_cost', 'floor', 'elevator', 'balcony',
+      'images', 'property_type', 'construction_year', 'plot_area',
+      'energy_class', 'association',
+    ]
+
     for (const field of fields) {
       if (body[field] !== undefined) {
-        if (field === 'price' || field === 'area' || field === 'monthly_fee' || field === 'operating_cost') {
+        if (
+          ['price', 'area', 'monthly_fee', 'operating_cost', 'construction_year', 'plot_area'].includes(field)
+        ) {
           updates[field] = parseInt(body[field])
-        } else if (field === 'rooms' || field === 'latitude' || field === 'longitude') {
+        } else if (['rooms', 'latitude', 'longitude'].includes(field)) {
           updates[field] = parseFloat(body[field])
-        } else if (field === 'elevator' || field === 'balcony') {
+        } else if (['elevator', 'balcony'].includes(field)) {
           updates[field] = body[field] === true || body[field] === 'true'
         } else if (field === 'images') {
           updates[field] = Array.isArray(body[field]) ? body[field] : []
@@ -144,9 +206,17 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    // Geokodning om koordinater saknas
-    if ((!updates.latitude || !updates.longitude) && (updates.address && updates.city)) {
-      const coords = await geocodeAddress(updates.address, updates.city)
+    // Geokoda om adress och stad finns men koordinater saknas
+    if (
+      (!updates.latitude || !updates.longitude) &&
+      updates.address &&
+      updates.city
+    ) {
+      const coords = await geocodeAddress(
+        updates.address,
+        updates.city,
+        updates.postal_code || body.postal_code
+      )
       if (coords) {
         updates.latitude = coords.lat
         updates.longitude = coords.lon
@@ -171,6 +241,9 @@ export async function PUT(request: NextRequest) {
   }
 }
 
+// ============================================================
+// DELETE – inaktivera bostad (admin/mäklare)
+// ============================================================
 export async function DELETE(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
   if (!token || !token.role) {
@@ -188,6 +261,7 @@ export async function DELETE(request: NextRequest) {
       .eq('id', id)
 
     if (error) throw error
+
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('DELETE property error:', error)

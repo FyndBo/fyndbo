@@ -21,6 +21,11 @@ interface Property {
   elevator: boolean | null
   balcony: boolean | null
   images: string[]
+  property_type: string | null
+  construction_year: number | null
+  plot_area: number | null
+  energy_class: string | null
+  association: string | null
 }
 
 const MapComponent = dynamic(() => import('./MapComponent'), {
@@ -80,16 +85,10 @@ export default function BostaderPage() {
     }
   }
 
-  useEffect(() => {
-    fetchProperties()
-  }, [search])
+  useEffect(() => { fetchProperties() }, [search])
 
   const formatPrice = (price: number) => new Intl.NumberFormat('sv-SE').format(price) + ' kr'
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    fetchProperties()
-  }
+  const handleSearch = (e: React.FormEvent) => { e.preventDefault(); fetchProperties() }
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -165,14 +164,17 @@ export default function BostaderPage() {
                     ) : (
                       <div className="h-full w-full flex items-center justify-center text-slate-600">
                         <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-                          <rect x="2" y="2" width="20" height="20" rx="2"/>
-                          <circle cx="8.5" cy="8.5" r="1.5"/>
-                          <polyline points="21 15 16 10 5 21"/>
+                          <rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
                         </svg>
                       </div>
                     )}
                     {/* Etiketter */}
-                    <div className="absolute top-2 left-2 flex gap-1">
+                    <div className="absolute top-2 left-2 flex gap-1 flex-wrap">
+                      {property.property_type && (
+                        <span className="bg-slate-700/80 text-white text-xs px-2 py-0.5 rounded-full capitalize">
+                          {property.property_type}
+                        </span>
+                      )}
                       {property.elevator && <span className="bg-indigo-500/80 text-white text-xs px-2 py-0.5 rounded-full">Hiss</span>}
                       {property.balcony && <span className="bg-emerald-500/80 text-white text-xs px-2 py-0.5 rounded-full">Balkong</span>}
                     </div>
@@ -187,7 +189,14 @@ export default function BostaderPage() {
                       {property.rooms && <span>{property.rooms} rum</span>}
                       {property.monthly_fee && <span>{property.monthly_fee.toLocaleString('sv-SE')} kr/mån</span>}
                     </div>
-                    <p className="text-slate-500 text-xs mt-2 truncate">{[property.address, property.city].filter(Boolean).join(', ')}</p>
+                    <p className="text-slate-500 text-xs mt-2 truncate">
+                      {[property.address, property.city].filter(Boolean).join(', ')}
+                    </p>
+                    {property.energy_class && (
+                      <span className="inline-block mt-2 text-xs bg-white/10 px-2 py-0.5 rounded-full text-slate-300">
+                        Energiklass {property.energy_class.toUpperCase()}
+                      </span>
+                    )}
                   </div>
                 </Link>
               ))}

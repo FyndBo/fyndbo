@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -20,10 +20,10 @@ interface Property {
 interface MapComponentProps {
   properties: Property[]
   hoveredId: number | null
-  mapExpanded: boolean          // ny prop
+  mapExpanded: boolean
 }
 
-// Markörer (oförändrade)
+// Eleganta markörer – blå cirkel med vit kant och skugga
 const markerIcon = L.divIcon({
   html: `
     <div style="
@@ -82,13 +82,11 @@ function createSwedenMask(geoJSON: any) {
   }
 }
 
-// Hjälpkomponent för att hantera storleksändring
+// Hjälpkomponent för att uppdatera kartstorlek vid expandering
 function MapSizeUpdater({ mapExpanded }: { mapExpanded: boolean }) {
   const map = useMap()
   useEffect(() => {
-    if (map) {
-      setTimeout(() => map.invalidateSize(), 100)
-    }
+    if (map) setTimeout(() => map.invalidateSize(), 100)
   }, [mapExpanded, map])
   return null
 }
@@ -96,7 +94,7 @@ function MapSizeUpdater({ mapExpanded }: { mapExpanded: boolean }) {
 export default function MapComponent({ properties, hoveredId, mapExpanded }: MapComponentProps) {
   const formatPrice = (price: number) => new Intl.NumberFormat('sv-SE').format(price) + ' kr'
   const [borderData, setBorderData] = useState<any>(null)
-  const [mapKey] = useState(() => Date.now())   // stabil unik nyckel
+  const [mapKey] = useState(() => Date.now())
 
   useEffect(() => {
     fetch('/sweden_border.geojson')
@@ -114,7 +112,7 @@ export default function MapComponent({ properties, hoveredId, mapExpanded }: Map
 
   return (
     <MapContainer
-      key={mapKey}                     // nyckel för att undvika "already initialized"
+      key={mapKey}
       center={[62.5, 16.0]}
       zoom={4.5}
       scrollWheelZoom={true}
@@ -125,11 +123,13 @@ export default function MapComponent({ properties, hoveredId, mapExpanded }: Map
       maxBounds={[[35, -20], [72, 50]]}
       maxBoundsViscosity={1.0}
     >
+      {/* Din personliga MapTiler-karta */}
       <TileLayer
-        url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles style by <a href="https://www.hotosm.org/">HOT</a>'
+        url="https://api.maptiler.com/maps/019f33bb-4ad8-76da-847a-124275c06bcf/style.json?key=pyfLqHxAveCHK2gF0LvF"
+        attribution='&copy; <a href="https://www.maptiler.com/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       />
 
+      {/* Mörk overlay med dämpad kontur */}
       {swedenMask && (
         <GeoJSON
           data={swedenMask!}
@@ -145,6 +145,7 @@ export default function MapComponent({ properties, hoveredId, mapExpanded }: Map
 
       <MapSizeUpdater mapExpanded={mapExpanded} />
 
+      {/* Markörer för bostäder */}
       {filteredProperties.map((property) => (
         <Marker
           key={property.id}
