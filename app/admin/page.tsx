@@ -144,7 +144,9 @@ const Icons = {
   ),
 }
 
-// Nyhetsbrevsmallar (premium) – samma som tidigare
+// ============================================================
+// Nyhetsbrevsmallar (premium)
+// ============================================================
 const newsletterTemplates = {
   welcome: {
     name: 'Välkommen',
@@ -399,9 +401,9 @@ export default function AdminPage() {
 
     try {
       const res = await fetch('/api/properties', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      const data = await res.json()
       if (!res.ok) {
-        const errData = await res.json().catch(() => ({ error: 'Okänt fel' }))
-        throw new Error(errData.error || errData.message || 'Kunde inte spara')
+        throw new Error(data.error || data.message || `Serverfel (${res.status})`)
       }
       showSuccess(editingProperty ? 'Bostad uppdaterad!' : 'Bostad tillagd!')
       setShowPropertyForm(false)
@@ -662,7 +664,7 @@ export default function AdminPage() {
               </div>
             )}
 
-            {/* Bostäder – med postnummer och alla nya fält */}
+            {/* Bostäder – med alla nya fält */}
             {activeTab === 'properties' && (
               <div className="space-y-6">
                 <div className="flex justify-between items-center">

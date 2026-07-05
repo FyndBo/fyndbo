@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
   if (!token || !token.role) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized – du måste vara inloggad' }, { status: 401 })
   }
 
   try {
@@ -156,12 +156,20 @@ export async function POST(request: NextRequest) {
       .select()
       .single()
 
-    if (error) throw error
+    if (error) {
+      console.error('Supabase insert error:', error)
+      return NextResponse.json({
+        error: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+      }, { status: 500 })
+    }
 
     return NextResponse.json({ success: true, property: data })
-  } catch (error) {
+  } catch (error: any) {
     console.error('POST property error:', error)
-    return NextResponse.json({ error: 'Kunde inte lägga till bostad' }, { status: 500 })
+    return NextResponse.json({ error: error.message || 'Okänt serverfel' }, { status: 500 })
   }
 }
 
