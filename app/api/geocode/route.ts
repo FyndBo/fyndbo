@@ -11,27 +11,24 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Adress och stad krävs' }, { status: 400 })
   }
 
-  // Bygg söksträng med postnummer om det finns
+  // Bygg adress med postnummer om det finns
   const parts = [address]
   if (postal_code) parts.push(postal_code)
   parts.push(city, 'Sweden')
   const query = encodeURIComponent(parts.join(', '))
 
-  const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`
+  const API_KEY = process.env.GOOGLE_MAPS_API_KEY
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=${API_KEY}`
 
   try {
-    const res = await fetch(url, {
-      headers: {
-        'User-Agent': 'FyndBo/1.0 (nyhetsbrev@fyndbo.se)',
-      },
-    })
+    const res = await fetch(url)
     const data = await res.json()
-    if (data && data.length > 0) {
-      return NextResponse.json({
-        lat: parseFloat(data[0].lat),
-        lon: parseFloat(data[0].lon),
-      })
+
+    if (data.status === 'OK' && data.results.length > 0) {
+      const { lat, lng } = data.results[0].geometry.location
+      return NextResponse.json({ lat, lon: lng })
     }
+
     return NextResponse.json({ error: 'Ingen träff för adressen' }, { status: 404 })
   } catch (error) {
     console.error('Geokodningsfel:', error)

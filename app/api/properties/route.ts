@@ -4,7 +4,7 @@ import { getToken } from 'next-auth/jwt'
 import type { NextRequest } from 'next/server'
 
 // ============================================================
-// Hjälpfunktion – servergeokodning med postnummer
+// Hjälpfunktion – servergeokodning med Google Maps
 // ============================================================
 async function geocodeAddress(
   address: string,
@@ -14,20 +14,18 @@ async function geocodeAddress(
   try {
     const parts = [address]
     if (postalCode) parts.push(postalCode)
-    if (city) parts.push(city)
-    parts.push('Sweden')
+    parts.push(city, 'Sweden')
     const query = encodeURIComponent(parts.join(', '))
-    const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`
 
-    const res = await fetch(url, {
-      headers: { 'User-Agent': 'FyndBo/1.0' },
-    })
+    const API_KEY = process.env.GOOGLE_MAPS_API_KEY
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=${API_KEY}`
+
+    const res = await fetch(url)
     const data = await res.json()
-    if (data && data.length > 0) {
-      return {
-        lat: parseFloat(data[0].lat),
-        lon: parseFloat(data[0].lon),
-      }
+
+    if (data.status === 'OK' && data.results.length > 0) {
+      const { lat, lng } = data.results[0].geometry.location
+      return { lat, lon: lng }
     }
   } catch (error) {
     console.error('Server‑geokodning misslyckades:', error)
@@ -93,9 +91,14 @@ export async function POST(request: NextRequest) {
 
     let lat = latitude ? parseFloat(latitude) : null
     let lng = longitude ? parseFloat(longitude) : null
+
+    // Geokoda med Google Maps om koordinater saknas
     if ((!lat || !lng) && address && city) {
       const coords = await geocodeAddress(address, city, postal_code)
-      if (coords) { lat = coords.lat; lng = coords.lon }
+      if (coords) {
+        lat = coords.lat
+        lng = coords.lon
+      }
     }
 
     const insertData: any = {
