@@ -4,7 +4,7 @@ import { getToken } from 'next-auth/jwt'
 import type { NextRequest } from 'next/server'
 
 // ============================================================
-// Hjälpfunktion – servergeokodning med Google Maps
+// Hjälpfunktion – servergeokodning med Nominatim
 // ============================================================
 async function geocodeAddress(
   address: string,
@@ -16,16 +16,15 @@ async function geocodeAddress(
     if (postalCode) parts.push(postalCode)
     parts.push(city, 'Sweden')
     const query = encodeURIComponent(parts.join(', '))
+    const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`
 
-    const API_KEY = process.env.GOOGLE_MAPS_API_KEY
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=${API_KEY}`
-
-    const res = await fetch(url)
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'FyndBo/1.0 (nyhetsbrev@fyndbo.se)' },
+    })
     const data = await res.json()
 
-    if (data.status === 'OK' && data.results.length > 0) {
-      const { lat, lng } = data.results[0].geometry.location
-      return { lat, lon: lng }
+    if (data && data.length > 0) {
+      return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) }
     }
   } catch (error) {
     console.error('Server‑geokodning misslyckades:', error)
@@ -34,13 +33,22 @@ async function geocodeAddress(
 }
 
 // ============================================================
-// GET – hämta alla aktiva bostäder (publik)
+// GET – hämta alla aktiva bostäder med utökade filter
 // ============================================================
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const search = searchParams.get('search')
     const city = searchParams.get('city')
+    const propertyType = searchParams.get('property_type')
+    const minPrice = searchParams.get('minPrice')
+    const maxPrice = searchParams.get('maxPrice')
+    const minRooms = searchParams.get('minRooms')
+    const minArea = searchParams.get('minArea')
+    const maxArea = searchParams.get('maxArea')
+    const elevator = searchParams.get('elevator')
+    const balcony = searchParams.get('balcony')
+    const energyClass = searchParams.get('energyClass')
 
     let query = supabaseAdmin
       .from('properties')
@@ -53,9 +61,16 @@ export async function GET(request: NextRequest) {
         `title.ilike.%${search}%,description.ilike.%${search}%,address.ilike.%${search}%,city.ilike.%${search}%,postal_code.ilike.%${search}%`
       )
     }
-    if (city) {
-      query = query.ilike('city', `%${city}%`)
-    }
+    if (city) query = query.ilike('city', `%${city}%`)
+    if (propertyType) query = query.eq('property_type', propertyType)
+    if (minPrice) query = query.gte('price', parseInt(minPrice))
+    if (maxPrice) query = query.lte('price', parseInt(maxPrice))
+    if (minRooms) query = query.gte('rooms', parseFloat(minRooms))
+    if (minArea) query = query.gte('area', parseInt(minArea))
+    if (maxArea) query = query.lte('area', parseInt(maxArea))
+    if (elevator === 'true') query = query.eq('elevator', true)
+    if (balcony === 'true') query = query.eq('balcony', true)
+    if (energyClass) query = query.eq('energy_class', energyClass.toUpperCase())
 
     const { data, error } = await query
     if (error) throw error
@@ -92,13 +107,9 @@ export async function POST(request: NextRequest) {
     let lat = latitude ? parseFloat(latitude) : null
     let lng = longitude ? parseFloat(longitude) : null
 
-    // Geokoda med Google Maps om koordinater saknas
     if ((!lat || !lng) && address && city) {
       const coords = await geocodeAddress(address, city, postal_code)
-      if (coords) {
-        lat = coords.lat
-        lng = coords.lon
-      }
+      if (coords) { lat = coords.lat; lng = coords.lon }
     }
 
     const insertData: any = {
@@ -137,10 +148,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error('Supabase insert error:', error)
       return NextResponse.json({
-        error: error.message,
-        code: error.code,
-        details: error.details,
-        hint: error.hint,
+        error: error.message, code: error.code, details: error.details, hint: error.hint,
       }, { status: 500 })
     }
 
@@ -176,9 +184,7 @@ export async function PUT(request: NextRequest) {
 
     for (const field of fields) {
       if (body[field] !== undefined) {
-        if (
-          ['price', 'area', 'monthly_fee', 'operating_cost', 'construction_year', 'plot_area'].includes(field)
-        ) {
+        if (['price', 'area', 'monthly_fee', 'operating_cost', 'construction_year', 'plot_area'].includes(field)) {
           updates[field] = parseInt(body[field])
         } else if (['rooms', 'latitude', 'longitude'].includes(field)) {
           updates[field] = parseFloat(body[field])
@@ -192,16 +198,8 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    if (
-      (!updates.latitude || !updates.longitude) &&
-      updates.address &&
-      updates.city
-    ) {
-      const coords = await geocodeAddress(
-        updates.address,
-        updates.city,
-        updates.postal_code || body.postal_code
-      )
+    if ((!updates.latitude || !updates.longitude) && updates.address && updates.city) {
+      const coords = await geocodeAddress(updates.address, updates.city, updates.postal_code || body.postal_code)
       if (coords) {
         updates.latitude = coords.lat
         updates.longitude = coords.lon

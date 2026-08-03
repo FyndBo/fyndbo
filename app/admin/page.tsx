@@ -214,7 +214,7 @@ export default function AdminPage() {
     property_type: '', construction_year: '', plot_area: '',
     energy_class: '', association: ''
   })
-  const [newImageUrl, setNewImageUrl] = useState('')
+  const [uploading, setUploading] = useState(false)
   const [geocoding, setGeocoding] = useState(false)
 
   const isAdmin = session?.user?.role === 'admin'
@@ -344,10 +344,21 @@ export default function AdminPage() {
     link.click()
   }
 
-  const addImage = () => {
-    if (!newImageUrl) return
-    setPropertyForm(prev => ({ ...prev, images: [...prev.images, newImageUrl] }))
-    setNewImageUrl('')
+  const uploadFile = async (file: File) => {
+    setUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Uppladdning misslyckades')
+      setPropertyForm(prev => ({ ...prev, images: [...prev.images, data.url] }))
+      showSuccess('Bild uppladdad!')
+    } catch (err: any) {
+      setAdminError(err.message)
+    } finally {
+      setUploading(false)
+    }
   }
 
   const removeImage = (index: number) => {
@@ -388,7 +399,7 @@ export default function AdminPage() {
       latitude: propertyForm.latitude ? Number(propertyForm.latitude) : null,
       longitude: propertyForm.longitude ? Number(propertyForm.longitude) : null,
       created_by: session?.user?.email,
-      images: propertyForm.images.length > 0 ? propertyForm.images : (propertyForm.image_url ? [propertyForm.image_url] : []),
+      images: propertyForm.images,
       construction_year: propertyForm.construction_year ? Number(propertyForm.construction_year) : null,
       plot_area: propertyForm.plot_area ? Number(propertyForm.plot_area) : null,
     }
@@ -720,18 +731,44 @@ export default function AdminPage() {
                       </div>
                     </div>
 
-                    {/* Bildhantering */}
+                    {/* Bildhantering – filuppladdning */}
                     <div className="mt-6">
-                      <label className="block text-sm text-slate-400 mb-1">Bilder (URL:er) – klistra in och klicka Lägg till</label>
-                      <div className="flex gap-2 mb-2">
-                        <input placeholder="https://bild.se/bild.jpg" value={newImageUrl} onChange={e => setNewImageUrl(e.target.value)} className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                        <button type="button" onClick={addImage} className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-medium">Lägg till</button>
-                      </div>
+                      <label className="block text-sm text-slate-400 mb-1">Bilder – ladda upp från din dator</label>
+                      <label
+                        htmlFor="file-upload"
+                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/20 rounded-xl cursor-pointer hover:border-blue-500/50 transition group"
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={async (e) => {
+                          e.preventDefault()
+                          const file = e.dataTransfer.files?.[0]
+                          if (file) await uploadFile(file)
+                        }}
+                      >
+                        <svg className="w-8 h-8 text-slate-400 group-hover:text-blue-400 transition mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" strokeLinecap="round" strokeLinejoin="round"/>
+                          <polyline points="17 8 12 3 7 8" strokeLinecap="round" strokeLinejoin="round"/>
+                          <line x1="12" y1="3" x2="12" y2="15" strokeLinecap="round"/>
+                        </svg>
+                        <p className="text-sm text-slate-400 group-hover:text-blue-400 transition">
+                          {uploading ? 'Laddar upp...' : 'Dra och släpp en bild här, eller klicka för att välja'}
+                        </p>
+                        <input
+                          id="file-upload"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0]
+                            if (file) await uploadFile(file)
+                          }}
+                        />
+                      </label>
+
                       {propertyForm.images.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mt-2">
+                        <div className="flex flex-wrap gap-2 mt-3">
                           {propertyForm.images.map((url, idx) => (
                             <div key={idx} className="relative group">
-                              <img src={url} alt={`bild ${idx+1}`} className="h-20 w-20 object-cover rounded-lg border border-white/10" />
+                              <img src={url} alt={`bild ${idx + 1}`} className="h-20 w-20 object-cover rounded-lg border border-white/10" />
                               <button onClick={() => removeImage(idx)} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition">×</button>
                             </div>
                           ))}
