@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -96,7 +96,10 @@ const roomOptions = [
   { value: '5', label: '5+' },
 ]
 
-export default function BostaderPage() {
+// ============================================================
+// Huvudkomponent – wrappad i Suspense
+// ============================================================
+function BostaderContent() {
   const searchParams = useSearchParams()
 
   const [properties, setProperties] = useState<Property[]>([])
@@ -300,5 +303,20 @@ export default function BostaderPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+// ============================================================
+// Exportera med Suspense
+// ============================================================
+export default function BostaderPage() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen bg-slate-900 flex items-center justify-center">
+        <p className="text-white animate-pulse">Laddar...</p>
+      </div>
+    }>
+      <BostaderContent />
+    </Suspense>
   )
 }
