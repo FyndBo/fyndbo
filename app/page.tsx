@@ -9,8 +9,8 @@ export default function Home() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 
   useEffect(() => {
-    // Ändrat till 31 juli 2026 kl. 10:00
-    const launchDate = new Date(2026, 6, 31, 10, 0, 0)
+    // Ändrat till 15 augusti 2026 kl. 10:00
+    const launchDate = new Date(2026, 7, 15, 10, 0, 0)
 
     const timer = setInterval(() => {
       const now = new Date()
@@ -90,7 +90,7 @@ export default function Home() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
             </span>
-            <span className="text-[10px] sm:text-xs text-gray-300 tracking-wide">Lanseras 31 juli 2026</span>
+            <span className="text-[10px] sm:text-xs text-gray-300 tracking-wide">Lanseras 15 augusti 2026</span>
           </div>
           
           <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-3 sm:mb-4 leading-[1.1] tracking-tight">
