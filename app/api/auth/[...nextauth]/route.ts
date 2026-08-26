@@ -1,9 +1,11 @@
 import NextAuth from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { supabaseAdmin } from '../../../../lib/supabaseAdmin'
 import bcrypt from 'bcryptjs'
 
+// ============================================================
+// TYPER – Viktigt för att role ska finnas i session
+// ============================================================
 declare module 'next-auth' {
   interface Session {
     user: {
@@ -11,7 +13,7 @@ declare module 'next-auth' {
       name?: string | null
       email?: string | null
       image?: string | null
-      role?: string
+      role?: string  // ← Detta gör att role finns i session
     }
   }
   interface User {
@@ -27,97 +29,66 @@ declare module 'next-auth/jwt' {
 
 const handler = NextAuth({
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
     CredentialsProvider({
       name: 'credentials',
       credentials: {
-        email: { 
-          label: 'E-post', 
-          type: 'email', 
-          placeholder: 'admin@exempel.se' 
-        },
-        password: { 
-          label: 'Lösenord', 
-          type: 'password',
-          placeholder: '••••••••' 
-        },
+        email: { label: 'E-post', type: 'email' },
+        password: { label: 'Lösenord', type: 'password' },
       },
       async authorize(credentials) {
-        // Kräv BÅDE email och lösenord
+        console.log('🔐 Authorize kallad med:', credentials?.email)
+
         if (!credentials?.email || !credentials?.password) {
           throw new Error('E-post och lösenord krävs')
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(credentials.email)) {
-          throw new Error('Ogiltig e-postadress')
-        }
+        const cleanEmail = credentials.email.toLowerCase().trim()
 
-        // Kolla admin_users först
-        const { data: adminUser } = await supabaseAdmin
+        // 1. Kolla i admin_users-tabellen
+        const { data: adminUser, error } = await supabaseAdmin
           .from('admin_users')
-          .select('email, password_hash')
-          .eq('email', credentials.email.toLowerCase().trim())
+          .select('email, password_hash, role')
+          .eq('email', cleanEmail)
           .single()
 
         if (adminUser) {
+          // Verifiera lösenord
           if (!adminUser.password_hash) {
-            throw new Error('Detta konto använder Google-inloggning. Klicka på "Logga in med Google".')
+            throw new Error('Detta konto använder Google-inloggning')
           }
 
-          const isValidPassword = await bcrypt.compare(credentials.password, adminUser.password_hash)
-          if (!isValidPassword) {
+          const isValid = await bcrypt.compare(credentials.password, adminUser.password_hash)
+          if (!isValid) {
             throw new Error('Fel lösenord')
           }
+
+          console.log('✅ Admin hittad i databasen, roll:', adminUser.role)
 
           return {
             id: adminUser.email,
             email: adminUser.email,
             name: adminUser.email.split('@')[0],
-            role: 'admin',
+            role: adminUser.role || 'admin',  // ← HÄMTAR ROLLEN FRÅN DATABASEN
           }
         }
 
-        // Fallback: super-admin lösenord (ADMIN_PASSWORD i .env)
+        // 2. Fallback: Super-admin
         if (credentials.password === process.env.ADMIN_PASSWORD) {
           return {
-            id: '1',
-            email: credentials.email.toLowerCase().trim(),
+            id: cleanEmail,
+            email: cleanEmail,
             name: 'Admin',
             role: 'admin',
           }
         }
 
-        throw new Error('Inget konto hittades med denna e-post')
+        throw new Error('Inget konto hittades')
       },
     }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider === 'google') {
-        const userEmail = user.email
-        if (!userEmail) return false
-
-        // Kontrollera att användaren finns i admin_users
-        const { data, error } = await supabaseAdmin
-          .from('admin_users')
-          .select('email')
-          .eq('email', userEmail.toLowerCase().trim())
-          .single()
-
-        if (error || !data) {
-          console.log(`Inloggning nekad: ${userEmail} finns inte i admin_users`)
-          return false // Neka åtkomst
-        }
-        
-        user.role = 'admin'
-      }
-      return true
-    },
     async jwt({ token, user }) {
+      // Lägg till role i JWT-token
       if (user) {
         token.role = user.role
         token.email = user.email
@@ -125,6 +96,7 @@ const handler = NextAuth({
       return token
     },
     async session({ session, token }) {
+      // Lägg till role i session
       if (session.user) {
         session.user.role = token.role as string
         session.user.email = token.email as string
@@ -134,7 +106,6 @@ const handler = NextAuth({
   },
   pages: {
     signIn: '/admin/login',
-    error: '/admin/login',
   },
   session: {
     strategy: 'jwt',

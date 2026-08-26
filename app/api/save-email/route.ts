@@ -1,7 +1,8 @@
 import { supabaseAdmin } from '../../../lib/supabaseAdmin'
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json()
 
