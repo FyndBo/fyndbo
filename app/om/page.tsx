@@ -1,218 +1,929 @@
-'use client'
 import Link from 'next/link'
 import Image from 'next/image'
 
-// ✅ Ikoner utanför komponenten - skapas bara en gång
+// ============================================================
+// IKONER
+// ============================================================
+
 function CostIcon() {
   return (
-    <svg aria-hidden="true" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <svg
+      aria-hidden="true"
+      className="h-6 w-6"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    >
       <circle cx="12" cy="12" r="10" />
-      <path d="M12 6v4M12 16v2" strokeLinecap="round" />
-      <circle cx="12" cy="14" r="2" fill="currentColor" stroke="none" />
+      <path
+        d="M12 6v4M12 16v2"
+        strokeLinecap="round"
+      />
+      <circle
+        cx="12"
+        cy="14"
+        r="2"
+        fill="currentColor"
+        stroke="none"
+      />
     </svg>
   )
 }
 
 function TargetIcon() {
   return (
-    <svg aria-hidden="true" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <svg
+      aria-hidden="true"
+      className="h-6 w-6"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    >
       <circle cx="12" cy="12" r="10" />
       <circle cx="12" cy="12" r="4" />
-      <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
+      <circle
+        cx="12"
+        cy="12"
+        r="1"
+        fill="currentColor"
+        stroke="none"
+      />
     </svg>
   )
 }
 
 function TechIcon() {
   return (
-    <svg aria-hidden="true" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <rect x="4" y="6" width="16" height="12" rx="1" />
-      <path d="M8 10h8M8 14h4" strokeLinecap="round" />
+    <svg
+      aria-hidden="true"
+      className="h-6 w-6"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    >
+      <rect
+        x="4"
+        y="6"
+        width="16"
+        height="12"
+        rx="1"
+      />
+
+      <path
+        d="M8 10h8M8 14h4"
+        strokeLinecap="round"
+      />
     </svg>
   )
 }
 
 function LightbulbIcon() {
   return (
-    <svg aria-hidden="true" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M9 18h6M10 21h4" strokeLinecap="round" />
+    <svg
+      aria-hidden="true"
+      className="h-6 w-6"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    >
+      <path
+        d="M9 18h6M10 21h4"
+        strokeLinecap="round"
+      />
+
       <path d="M12 3a7 7 0 0 0-7 7c0 2.8 1.5 4.5 2 5.5V17h10v-1.5c.5-1 2-2.7 2-5.5a7 7 0 0 0-7-7z" />
-      <path d="M12 8v4" strokeLinecap="round" />
+
+      <path
+        d="M12 8v4"
+        strokeLinecap="round"
+      />
     </svg>
   )
 }
 
 function CheckIcon() {
   return (
-    <svg aria-hidden="true" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+    <svg
+      aria-hidden="true"
+      className="h-5 w-5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path
+        d="M5 13l4 4L19 7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   )
 }
 
 function ArrowLeftIcon() {
   return (
-    <svg aria-hidden="true" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M15 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
+    <svg
+      aria-hidden="true"
+      className="h-4 w-4"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path
+        d="M15 5l-7 7 7 7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   )
 }
 
 function QuoteIcon() {
   return (
-    <svg aria-hidden="true" className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M10 11H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6c0 2-1 3-3 3" strokeLinecap="round" />
-      <path d="M20 11h-4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6c0 2-1 3-3 3" strokeLinecap="round" />
+    <svg
+      aria-hidden="true"
+      className="h-8 w-8"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    >
+      <path
+        d="M10 11H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6c0 2-1 3-3 3"
+        strokeLinecap="round"
+      />
+
+      <path
+        d="M20 11h-4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6c0 2-1 3-3 3"
+        strokeLinecap="round"
+      />
     </svg>
   )
 }
 
+// ============================================================
+// FÖRDELAR
+// ============================================================
+
+const benefits = [
+  {
+    title: 'Transparent prissättning',
+    description: 'Tydligt från början',
+  },
+  {
+    title: 'Användaren i fokus',
+    description: 'Byggt för bostadssökande',
+  },
+  {
+    title: 'Modern sökning',
+    description: 'Hitta rätt snabbare',
+  },
+  {
+    title: 'Annonser samlade',
+    description: 'En plats för bostadssökandet',
+  },
+]
+
+// ============================================================
+// OM FYNDBO
+// ============================================================
+
 export default function OmSida() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
-      {/* Bakgrundsdekorationer */}
-      <div className="absolute inset-0" aria-hidden="true">
-        <div className="absolute top-10 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse motion-reduce:animate-none"></div>
-        <div className="absolute bottom-10 right-10 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse motion-reduce:animate-none delay-1000"></div>
-        <div className="absolute inset-0 bg-[linear-gradient(45deg,#ffffff03_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+    <div className="
+      relative
+      min-h-screen
+      overflow-hidden
+      bg-gradient-to-br
+      from-slate-900
+      via-slate-800
+      to-slate-900
+    ">
+
+      {/* ========================================================
+          BAKGRUND
+      ======================================================== */}
+
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-0
+        "
+        aria-hidden="true"
+      >
+
+        <div className="
+          absolute
+          left-10
+          top-10
+          h-72
+          w-72
+          rounded-full
+          bg-blue-500/10
+          blur-3xl
+          animate-pulse
+          motion-reduce:animate-none
+        " />
+
+        <div className="
+          absolute
+          bottom-10
+          right-10
+          h-80
+          w-80
+          rounded-full
+          bg-purple-500/10
+          blur-3xl
+          animate-pulse
+          motion-reduce:animate-none
+        " />
+
+        <div className="
+          absolute
+          inset-0
+          bg-[linear-gradient(45deg,#ffffff03_1px,transparent_1px)]
+          bg-[size:50px_50px]
+        " />
+
       </div>
 
-      <main className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        {/* Logga */}
-        <div className="text-center mb-5 sm:mb-6">
-          <Image 
-            src="/Fyndbo-blue-bkg.png" 
-            alt="FyndBo.se - Sveriges modernaste bostadsplattform" 
-            width={800}
-            height={400}
-            className="h-64 sm:h-56 md:h-64 lg:h-72 xl:h-80 2xl:h-96 w-auto hover:scale-105 transition-transform duration-500 mx-auto drop-shadow-xl"
-            priority
-            sizes="(max-width: 640px) 100vw, 75vw"
-          />
+      {/* ========================================================
+          MAIN
+      ======================================================== */}
+
+      <main className="
+        relative
+        z-10
+        mx-auto
+        max-w-5xl
+        px-4
+        py-6
+
+        sm:px-6
+        sm:py-8
+      ">
+
+        {/* ======================================================
+            LOGGA
+        ====================================================== */}
+
+        <div className="
+          mb-5
+          text-center
+          sm:mb-6
+        ">
+
+          <Link
+            href="/"
+            aria-label="Gå till FyndBo startsida"
+            className="inline-block"
+          >
+
+            <Image
+              src="/Fyndbo-blue-bkg.png"
+              alt="FyndBo.se"
+              width={800}
+              height={400}
+              priority
+              sizes="
+                (max-width: 640px) 320px,
+                (max-width: 1024px) 420px,
+                520px
+              "
+              className="
+                mx-auto
+                h-40
+                w-auto
+                drop-shadow-xl
+
+                transition-transform
+                duration-500
+
+                hover:scale-105
+
+                sm:h-48
+                md:h-56
+                lg:h-64
+                xl:h-72
+              "
+            />
+
+          </Link>
+
         </div>
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-white/10 p-6 sm:p-8 md:p-10">
-          {/* Header */}
-          <header className="text-center mb-8 sm:mb-10">
-            <div className="inline-block mb-2 sm:mb-3 px-4 py-1.5 bg-white/10 rounded-full border border-white/20">
-              <p className="text-xs sm:text-sm text-gray-300 tracking-wider uppercase">✦ Varför FyndBo ✦</p>
+        {/* ======================================================
+            HUVUDKORT
+        ====================================================== */}
+
+        <div className="
+          rounded-2xl
+          border
+          border-white/10
+          bg-white/5
+          p-5
+          shadow-2xl
+          backdrop-blur-sm
+
+          sm:p-8
+          md:p-10
+        ">
+
+          {/* ====================================================
+              HEADER
+          ==================================================== */}
+
+          <header className="
+            mb-8
+            text-center
+            sm:mb-10
+          ">
+
+            <div className="
+              mb-3
+              inline-flex
+              items-center
+              gap-2
+              rounded-full
+              border
+              border-white/20
+              bg-white/10
+              px-4
+              py-1.5
+            ">
+
+              <span className="
+                h-1.5
+                w-1.5
+                rounded-full
+                bg-blue-400
+              " />
+
+              <span className="
+                text-[10px]
+                font-medium
+                uppercase
+                tracking-[0.18em]
+                text-gray-300
+
+                sm:text-xs
+              ">
+                Varför FyndBo
+              </span>
+
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-4">
-              En bostadsmarknad som fungerar för alla
+
+            <h1 className="
+              mx-auto
+              mb-4
+              max-w-4xl
+              text-3xl
+              font-bold
+              leading-tight
+              tracking-tight
+              text-white
+
+              sm:text-4xl
+              md:text-5xl
+              lg:text-6xl
+            ">
+              Vi bygger en enklare väg till
+              <span className="
+                block
+                bg-gradient-to-r
+                from-blue-300
+                via-indigo-300
+                to-purple-300
+                bg-clip-text
+                text-transparent
+              ">
+                ditt nästa hem
+              </span>
             </h1>
-            <p className="text-sm sm:text-base text-gray-300 max-w-2xl mx-auto">
-              Vi har analyserat dagens system och identifierat flera grundläggande brister. 
-              FyndBo.se är vårt svar – en plattform byggd på transparens, rättvisa och modern teknik.
+
+            <p className="
+              mx-auto
+              max-w-2xl
+              text-sm
+              leading-relaxed
+              text-gray-300
+
+              sm:text-base
+              md:text-lg
+            ">
+              Bostadssökandet ska vara enkelt, transparent och
+              modernt. FyndBo.se byggs för att samla information,
+              förbättra sökningen och göra det lättare att hitta
+              bostaden som faktiskt passar dig.
             </p>
+
           </header>
 
-          {/* Problem-sektioner */}
+          {/* ====================================================
+              VARFÖR MARKNADEN KAN BLI BÄTTRE
+          ==================================================== */}
+
           <div className="space-y-4">
-            <section className="bg-gradient-to-r from-rose-500/10 to-transparent rounded-xl p-5 border-l-4 border-rose-500 group hover:scale-[1.02] transition-transform duration-300">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="text-rose-400 group-hover:scale-110 transition-transform" aria-hidden="true">
+
+            {/* KOSTNADER */}
+
+            <section className="
+              group
+              rounded-xl
+              border
+              border-white/5
+              border-l-4
+              border-l-rose-500
+              bg-gradient-to-r
+              from-rose-500/10
+              to-transparent
+              p-5
+
+              transition-all
+              duration-300
+
+              hover:border-white/10
+              hover:bg-rose-500/[0.12]
+            ">
+
+              <div className="
+                mb-2
+                flex
+                items-center
+                gap-3
+              ">
+
+                <div className="
+                  text-rose-400
+                  transition-transform
+                  duration-300
+                  group-hover:scale-110
+                ">
                   <CostIcon />
                 </div>
-                <h2 className="text-lg sm:text-xl font-semibold text-white">Orimliga kostnader</h2>
+
+                <h2 className="
+                  text-lg
+                  font-semibold
+                  text-white
+
+                  sm:text-xl
+                ">
+                  Höga kostnader
+                </h2>
+
               </div>
-              <p className="text-sm sm:text-base text-gray-300 pl-9">
-                Priserna för att synas på de stora plattformarna har skjutit i höjden. 
-                Det som en gång var en rimlig avgift har blivit en rejäl tröskel för många.
+
+              <p className="
+                pl-9
+                text-sm
+                leading-relaxed
+                text-gray-300
+
+                sm:text-base
+              ">
+                Att marknadsföra en bostad kan innebära stora
+                kostnader. Vi tror på en modell där prissättningen
+                är tydlig och där värdet för både bostadssäljare,
+                mäklare och bostadssökande står i centrum.
               </p>
+
             </section>
 
-            <section className="bg-gradient-to-r from-amber-500/10 to-transparent rounded-xl p-5 border-l-4 border-amber-500 group hover:scale-[1.02] transition-transform duration-300">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="text-amber-400 group-hover:scale-110 transition-transform" aria-hidden="true">
+            {/* INCITAMENT */}
+
+            <section className="
+              group
+              rounded-xl
+              border
+              border-white/5
+              border-l-4
+              border-l-amber-500
+              bg-gradient-to-r
+              from-amber-500/10
+              to-transparent
+              p-5
+
+              transition-all
+              duration-300
+
+              hover:border-white/10
+              hover:bg-amber-500/[0.12]
+            ">
+
+              <div className="
+                mb-2
+                flex
+                items-center
+                gap-3
+              ">
+
+                <div className="
+                  text-amber-400
+                  transition-transform
+                  duration-300
+                  group-hover:scale-110
+                ">
                   <TargetIcon />
                 </div>
-                <h2 className="text-lg sm:text-xl font-semibold text-white">Fel incitament</h2>
+
+                <h2 className="
+                  text-lg
+                  font-semibold
+                  text-white
+
+                  sm:text-xl
+                ">
+                  Användaren ska komma först
+                </h2>
+
               </div>
-              <p className="text-sm sm:text-base text-gray-300 pl-9">
-                Dagens modell premierar volym och höga priser framför verklig kundnytta. 
-                Det är inte den som skapar mest värde som vinner.
+
+              <p className="
+                pl-9
+                text-sm
+                leading-relaxed
+                text-gray-300
+
+                sm:text-base
+              ">
+                En bostadsplattform ska hjälpa människor att fatta
+                bättre beslut. Därför vill vi bygga funktioner som
+                utgår från vad bostadssökaren faktiskt behöver –
+                inte bara från hur många annonser som kan visas.
               </p>
+
             </section>
 
-            <section className="bg-gradient-to-r from-gray-500/10 to-transparent rounded-xl p-5 border-l-4 border-gray-500 group hover:scale-[1.02] transition-transform duration-300">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="text-gray-400 group-hover:scale-110 transition-transform" aria-hidden="true">
+            {/* TEKNIK */}
+
+            <section className="
+              group
+              rounded-xl
+              border
+              border-white/5
+              border-l-4
+              border-l-slate-400
+              bg-gradient-to-r
+              from-slate-500/10
+              to-transparent
+              p-5
+
+              transition-all
+              duration-300
+
+              hover:border-white/10
+              hover:bg-slate-500/[0.12]
+            ">
+
+              <div className="
+                mb-2
+                flex
+                items-center
+                gap-3
+              ">
+
+                <div className="
+                  text-slate-300
+                  transition-transform
+                  duration-300
+                  group-hover:scale-110
+                ">
                   <TechIcon />
                 </div>
-                <h2 className="text-lg sm:text-xl font-semibold text-white">Gammal teknik</h2>
+
+                <h2 className="
+                  text-lg
+                  font-semibold
+                  text-white
+
+                  sm:text-xl
+                ">
+                  Tekniken kan göra mer
+                </h2>
+
               </div>
-              <p className="text-sm sm:text-base text-gray-300 pl-9">
-                Trots miljardvärden har den tekniska utvecklingen stått stilla i åratal. 
-                Sökfunktioner, kartor och filtrering fungerar undermåligt.
+
+              <p className="
+                pl-9
+                text-sm
+                leading-relaxed
+                text-gray-300
+
+                sm:text-base
+              ">
+                Kartor, filtrering, sökning och jämförelser kan
+                göras både snabbare och smartare. FyndBo byggs
+                från grunden med modern teknik och fokus på en
+                smidig upplevelse på både mobil och dator.
               </p>
+
             </section>
+
           </div>
 
-          {/* Lösnings-sektion */}
-          <section className="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-xl p-5 sm:p-6 border-l-4 border-blue-500 mt-6">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="text-blue-400" aria-hidden="true">
+          {/* ====================================================
+              LÖSNING
+          ==================================================== */}
+
+          <section className="
+            mt-6
+            rounded-2xl
+            border
+            border-blue-500/20
+            bg-gradient-to-br
+            from-blue-500/15
+            via-indigo-500/10
+            to-purple-500/10
+            p-5
+
+            sm:p-6
+            md:p-8
+          ">
+
+            <div className="
+              mb-3
+              flex
+              items-center
+              gap-3
+            ">
+
+              <div className="text-blue-400">
                 <LightbulbIcon />
               </div>
-              <h2 className="text-lg sm:text-xl font-semibold text-white">Därför bygger vi FyndBo.se</h2>
+
+              <h2 className="
+                text-lg
+                font-semibold
+                text-white
+
+                sm:text-xl
+                md:text-2xl
+              ">
+                Därför bygger vi FyndBo.se
+              </h2>
+
             </div>
-            <p className="text-sm sm:text-base text-gray-200 mb-5 pl-9">
-              Vi tror att teknik kan göra bostadsmarknaden mer transparent, rättvis och tillgänglig. 
-              Därför skapar vi en plattform som sätter dig i första rummet.
+
+            <p className="
+              mb-6
+              max-w-3xl
+              pl-9
+              text-sm
+              leading-relaxed
+              text-gray-200
+
+              sm:text-base
+            ">
+              Vår ambition är att skapa en modern svensk
+              bostadsplattform där det är enklare att söka,
+              jämföra och upptäcka bostäder – med tydligare
+              information och en upplevelse byggd för nästa
+              generation bostadssökande.
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {[
-                { title: 'Transparent prissättning', desc: 'Inga dolda avgifter' },
-                { title: 'Mäklare för dig', desc: 'Deras incitament är din glädje' },
-                { title: 'Modern sökmotor', desc: 'Hitta drömhemmet snabbt' },
-                { title: 'Alla annonser samlade', desc: 'Oavsett var de är publicerade' },
-              ].map((item) => (
-                <div key={item.title} className="bg-white/5 rounded-xl p-3 text-center hover:bg-white/10 transition-all duration-300 group">
-                  <div className="flex justify-center mb-2" aria-hidden="true">
-                    <div className="text-emerald-400 group-hover:scale-110 transition-transform">
+
+            <div className="
+              grid
+              grid-cols-1
+              gap-3
+
+              sm:grid-cols-2
+              lg:grid-cols-4
+            ">
+
+              {benefits.map((item) => (
+                <div
+                  key={item.title}
+                  className="
+                    group
+                    rounded-xl
+                    border
+                    border-white/5
+                    bg-white/5
+                    p-4
+                    text-center
+
+                    transition-all
+                    duration-300
+
+                    hover:-translate-y-1
+                    hover:border-blue-400/20
+                    hover:bg-white/10
+                  "
+                >
+
+                  <div className="
+                    mb-3
+                    flex
+                    justify-center
+                  ">
+
+                    <div className="
+                      flex
+                      h-9
+                      w-9
+                      items-center
+                      justify-center
+                      rounded-full
+                      bg-emerald-500/10
+                      text-emerald-400
+
+                      transition-transform
+                      duration-300
+
+                      group-hover:scale-110
+                    ">
                       <CheckIcon />
                     </div>
+
                   </div>
-                  <p className="font-medium text-white text-xs sm:text-sm">{item.title}</p>
-                  <p className="text-gray-300 text-[10px] sm:text-xs mt-1">{item.desc}</p>
+
+                  <p className="
+                    text-sm
+                    font-semibold
+                    text-white
+                  ">
+                    {item.title}
+                  </p>
+
+                  <p className="
+                    mt-1
+                    text-xs
+                    text-gray-400
+                  ">
+                    {item.description}
+                  </p>
+
                 </div>
               ))}
+
             </div>
+
           </section>
 
-          {/* Citat */}
-          <figure className="text-center pt-8">
-            <div className="flex justify-center mb-3" aria-hidden="true">
-              <div className="text-gray-400 opacity-50">
+          {/* ====================================================
+              VISION
+          ==================================================== */}
+
+          <figure className="
+            pt-10
+            text-center
+          ">
+
+            <div className="
+              mb-3
+              flex
+              justify-center
+            ">
+
+              <div className="
+                text-gray-400
+                opacity-50
+              ">
                 <QuoteIcon />
               </div>
+
             </div>
-            <blockquote className="text-gray-200 italic text-base sm:text-lg max-w-2xl mx-auto">
-              <p>"En bättre väg till ditt nästa hem – utan krångel och dolda agendor."</p>
+
+            <blockquote className="
+              mx-auto
+              max-w-2xl
+              text-base
+              italic
+              leading-relaxed
+              text-gray-200
+
+              sm:text-lg
+              md:text-xl
+            ">
+              <p>
+                “En bättre väg till ditt nästa hem –
+                enklare, tydligare och byggd för dig.”
+              </p>
             </blockquote>
-            <figcaption className="text-blue-400 mt-4 font-medium text-sm sm:text-base">
-              — Teamet bakom <cite className="not-italic">FyndBo.se</cite>
+
+            <figcaption className="
+              mt-4
+              text-sm
+              font-medium
+              text-blue-400
+
+              sm:text-base
+            ">
+              Teamet bakom{' '}
+              <cite className="not-italic">
+                FyndBo.se
+              </cite>
             </figcaption>
+
           </figure>
 
-          {/* Tillbaka-knapp */}
-          <div className="mt-8 text-center">
-            <Link 
-              href="/" 
-              className="group inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium px-6 sm:px-8 py-2.5 sm:py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-xl text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-900"
+          {/* ====================================================
+              TILLBAKA
+          ==================================================== */}
+
+          <div className="
+            mt-10
+            text-center
+          ">
+
+            <Link
+              href="/"
               aria-label="Gå tillbaka till startsidan"
+              className="
+                group
+                inline-flex
+                items-center
+                gap-2
+
+                rounded-full
+
+                bg-gradient-to-r
+                from-blue-600
+                to-indigo-600
+
+                px-6
+                py-2.5
+
+                text-sm
+                font-medium
+                text-white
+
+                shadow-md
+                shadow-blue-500/10
+
+                transition-all
+                duration-300
+
+                hover:-translate-y-0.5
+                hover:from-blue-700
+                hover:to-indigo-700
+                hover:shadow-xl
+                hover:shadow-blue-500/20
+
+                focus:outline-none
+                focus:ring-2
+                focus:ring-blue-400
+                focus:ring-offset-2
+                focus:ring-offset-slate-900
+
+                sm:px-8
+                sm:py-3
+                sm:text-base
+              "
             >
-              <ArrowLeftIcon />
-              <span>Tillbaka till startsidan</span>
+
+              <span className="
+                transition-transform
+                duration-300
+                group-hover:-translate-x-1
+              ">
+                <ArrowLeftIcon />
+              </span>
+
+              <span>
+                Tillbaka till startsidan
+              </span>
+
             </Link>
+
           </div>
+
         </div>
 
-        {/* Footer */}
-        <footer className="mt-8 sm:mt-10 pt-6 border-t border-white/10 text-center">
-          <p className="text-xs sm:text-sm text-gray-300">© 2026 FyndBo.se – En plattform för bostadssökande</p>
+        {/* ======================================================
+            FOOTER
+        ====================================================== */}
+
+        <footer className="
+          mt-8
+          border-t
+          border-white/10
+          pt-6
+          text-center
+
+          sm:mt-10
+        ">
+
+          <p className="
+            text-xs
+            text-gray-400
+
+            sm:text-sm
+          ">
+            © 2026 FyndBo.se – En plattform för bostadssökande
+          </p>
+
         </footer>
+
       </main>
+
     </div>
   )
 }

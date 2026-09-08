@@ -2,50 +2,198 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Extra animationer */
-@keyframes pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.8; }
-}
-.animate-pulse-custom {
-  animation: pulse 3s ease-in-out infinite;
-}
 
 /* ============================================================
-   Leaflet-styling (zoom-knapp och popup)
+   FYNDBO – EGNA ANIMATIONER
    ============================================================ */
+
+@keyframes fyndbo-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-custom {
+  animation: fyndbo-pulse 3s ease-in-out infinite;
+}
+
+
+/* ============================================================
+   LEAFLET – ZOOM-KONTROLLER
+   ============================================================ */
+
 .leaflet-control-zoom {
   border: none !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.2) !important;
+
   border-radius: 12px !important;
+
   overflow: hidden;
 }
+
+
 .leaflet-control-zoom a {
   background: #ffffff !important;
+
   color: #334155 !important;
-  width: 32px;
-  height: 32px;
-  line-height: 32px;
-  font-size: 18px;
-  font-weight: 500;
-  border-bottom: 1px solid #e2e8f0 !important;
+
+  width: 32px !important;
+
+  height: 32px !important;
+
+  line-height: 32px !important;
+
+  font-size: 18px !important;
+
+  font-weight: 500 !important;
+
+  border-bottom:
+    1px solid #e2e8f0 !important;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
+
+
 .leaflet-control-zoom a:last-child {
   border-bottom: none !important;
 }
+
+
 .leaflet-control-zoom a:hover {
   background: #f1f5f9 !important;
+
+  color: #0f172a !important;
 }
+
+
+/* ============================================================
+   LEAFLET – POPUPS
+   ============================================================ */
 
 .leaflet-popup-content-wrapper {
   border-radius: 16px !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.15) !important;
+
   padding: 4px !important;
 }
+
+
 .leaflet-popup-content {
   margin: 12px 16px !important;
-  font-family: 'Inter', system-ui, sans-serif;
+
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
-.leaflet-popup-tip {
-  display: none;
+
+
+/*
+  OBS:
+  Vi gömmer INTE .leaflet-popup-tip globalt.
+
+  MapComponent.tsx använder popup-spetsen själv,
+  så den måste få finnas kvar.
+*/
+
+
+/* ============================================================
+   LEAFLET – GRUND
+   ============================================================ */
+
+.leaflet-container {
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  outline: none;
+}
+
+
+/* ============================================================
+   LEAFLET – KONTROLLER
+   ============================================================ */
+
+.leaflet-control {
+  font-family:
+    Inter,
+    system-ui,
+    sans-serif;
+}
+
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+
+  height: 8px;
+}
+
+
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+
+  border-radius: 999px;
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+
+/* ============================================================
+   TEXT SELECTION
+   ============================================================ */
+
+::selection {
+  background: rgba(59, 130, 246, 0.35);
+
+  color: #ffffff;
+}
+
+
+/* ============================================================
+   BODY
+   ============================================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+
+body {
+  margin: 0;
+
+  padding: 0;
+
+  background: #0f172a;
+
+  color: #ffffff;
 }

@@ -2,17 +2,68 @@ import { supabaseAdmin } from '../../../../lib/supabaseAdmin'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+// ============================================================
+// JSON
+// ============================================================
+
+function json(
+  data: unknown,
+  status = 200
+) {
+  return NextResponse.json(data, {
+    status,
+
+    headers: {
+      'Cache-Control':
+        'no-store, no-cache, must-revalidate',
+    },
+  })
+}
+
+// ============================================================
+// GET – HÄMTA ENSKILD AKTIV BOSTAD
+// ============================================================
+
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+
+  {
+    params,
+  }: {
+    params: Promise<{
+      id: string
+    }>
+  }
 ) {
   try {
-    const id = parseInt(params.id)
-    if (isNaN(id)) {
-      return NextResponse.json({ error: 'Ogiltigt ID' }, { status: 400 })
+    // Moderna Next.js Route Handlers
+    // använder async params.
+    const { id: rawId } =
+      await params
+
+    const id =
+      Number.parseInt(
+        rawId,
+        10
+      )
+
+    if (
+      !Number.isFinite(id) ||
+      id <= 0
+    ) {
+      return json(
+        {
+          error:
+            'Ogiltigt bostads-ID.',
+        },
+        400
+      )
     }
 
-    const { data, error } = await supabaseAdmin
+    const {
+      data,
+      error,
+    } = await supabaseAdmin
       .from('properties')
       .select('*')
       .eq('id', id)
@@ -20,12 +71,37 @@ export async function GET(
       .single()
 
     if (error || !data) {
-      return NextResponse.json({ error: 'Bostaden hittades inte' }, { status: 404 })
+      if (error) {
+        console.warn(
+          `Property ${id} hittades inte:`,
+          error.code
+        )
+      }
+
+      return json(
+        {
+          error:
+            'Bostaden hittades inte.',
+        },
+        404
+      )
     }
 
-    return NextResponse.json({ property: data })
+    return json({
+      property: data,
+    })
   } catch (error) {
-    console.error('GET property error:', error)
-    return NextResponse.json({ error: 'Serverfel' }, { status: 500 })
+    console.error(
+      'GET property error:',
+      error
+    )
+
+    return json(
+      {
+        error:
+          'Ett serverfel inträffade.',
+      },
+      500
+    )
   }
 }

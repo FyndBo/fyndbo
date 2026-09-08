@@ -2,61 +2,517 @@ import { NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import type { NextRequest } from 'next/server'
 
-export async function POST(request: NextRequest) {
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
-  if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+function json(
+  data: unknown,
+  status = 200
+) {
+  return NextResponse.json(
+    data,
+    {
+      status,
+      headers: {
+        'Cache-Control':
+          'no-store',
+      },
+    }
+  )
+}
+
+function normalizeEmail(
+  value: unknown
+) {
+  if (
+    typeof value !== 'string'
+  ) {
+    return ''
+  }
+
+  return value
+    .trim()
+    .toLowerCase()
+}
+
+function isValidEmail(
+  email: string
+) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+    email
+  )
+}
+
+async function brevoRequest(
+  path: string,
+  apiKey: string,
+  options: RequestInit = {}
+) {
+  const response =
+    await fetch(
+      `https://api.brevo.com/v3${path}`,
+      {
+        ...options,
+
+        headers: {
+          accept:
+            'application/json',
+
+          'api-key':
+            apiKey,
+
+          ...(options.body
+            ? {
+                'Content-Type':
+                  'application/json',
+              }
+            : {}),
+
+          ...(options.headers ||
+            {}),
+        },
+
+        cache:
+          'no-store',
+      }
+    )
+
+  const data =
+    await response
+      .json()
+      .catch(
+        () => null
+      )
+
+  return {
+    response,
+    data,
+  }
+}
+
+export async function POST(
+  request: NextRequest
+) {
+  // ==========================================================
+  // AUTH
+  // ==========================================================
+
+  const token =
+    await getToken({
+      req:
+        request,
+
+      secret:
+        process.env
+          .NEXTAUTH_SECRET,
+    })
+
+  if (
+    !token ||
+    token.role !==
+      'admin'
+  ) {
+    return json(
+      {
+        error:
+          'Du saknar behörighet att skicka nyhetsbrev.',
+      },
+      401
+    )
+  }
+
+  // ==========================================================
+  // ENV
+  // ==========================================================
+
+  const apiKey =
+    process.env
+      .BREVO_API_KEY
+
+  const senderEmail =
+    process.env
+      .BREVO_SENDER_EMAIL ||
+    'info@fyndbo.se'
+
+  if (!apiKey) {
+    console.error(
+      'BREVO_API_KEY saknas.'
+    )
+
+    return json(
+      {
+        error:
+          'Brevo är inte korrekt konfigurerat.',
+      },
+      500
+    )
+  }
 
   try {
-    const { listId, subject, content, testEmail } = await request.json()
-    if (!listId || !subject || !content) {
-      return NextResponse.json({ error: 'ListId, subject and content required' }, { status: 400 })
+    // ========================================================
+    // BODY
+    // ========================================================
+
+    const body =
+      await request.json()
+
+    const listId =
+      Number(
+        body.listId
+      )
+
+    const subject =
+      typeof body.subject ===
+      'string'
+        ? body.subject.trim()
+        : ''
+
+    const preheader =
+      typeof body.preheader ===
+      'string'
+        ? body.preheader.trim()
+        : ''
+
+    const content =
+      typeof body.content ===
+      'string'
+        ? body.content.trim()
+        : ''
+
+    const testEmail =
+      normalizeEmail(
+        body.testEmail
+      )
+
+    // ========================================================
+    // VALIDATION
+    // ========================================================
+
+    if (
+      !Number.isInteger(
+        listId
+      ) ||
+      listId <= 0
+    ) {
+      return json(
+        {
+          error:
+            'Välj en giltig mottagarlista.',
+        },
+        400
+      )
     }
 
-    // Bygg recipients
-    let to: any[] = []
+    if (
+      subject.length < 2 ||
+      subject.length > 200
+    ) {
+      return json(
+        {
+          error:
+            'Ämnesraden saknas eller är för lång.',
+        },
+        400
+      )
+    }
+
+    if (
+      content.length < 20
+    ) {
+      return json(
+        {
+          error:
+            'Nyhetsbrevet saknar innehåll.',
+        },
+        400
+      )
+    }
+
+    if (
+      testEmail &&
+      !isValidEmail(
+        testEmail
+      )
+    ) {
+      return json(
+        {
+          error:
+            'Testadressen är inte giltig.',
+        },
+        400
+      )
+    }
+
+    // ========================================================
+    // VERIFY LIST + GET COUNT
+    // ========================================================
+
+    const {
+      response:
+        listResponse,
+      data:
+        listData,
+    } =
+      await brevoRequest(
+        `/contacts/lists/${listId}`,
+        apiKey
+      )
+
+    if (
+      !listResponse.ok
+    ) {
+      console.error(
+        'Brevo list lookup error:',
+        listData
+      )
+
+      return json(
+        {
+          error:
+            'Mottagarlistan kunde inte hittas i Brevo.',
+        },
+        400
+      )
+    }
+
+    const recipientCount =
+      Number(
+        listData?.totalSubscribers ||
+          0
+      )
+
+    if (
+      !testEmail &&
+      recipientCount <= 0
+    ) {
+      return json(
+        {
+          error:
+            'Den valda Brevo-listan har inga prenumeranter.',
+        },
+        400
+      )
+    }
+
+    // ========================================================
+    // CREATE BREVO EMAIL CAMPAIGN
+    //
+    // Listutskick ska använda /emailCampaigns.
+    // På så sätt fungerar bland annat:
+    // {{ unsubscribe }}
+    // {{ mirror }}
+    // ========================================================
+
+    const campaignName =
+      `${
+        testEmail
+          ? 'TEST - '
+          : ''
+      }FyndBo - ${subject}`
+        .slice(
+          0,
+          120
+        )
+
+    const {
+      response:
+        createResponse,
+      data:
+        createData,
+    } =
+      await brevoRequest(
+        '/emailCampaigns',
+        apiKey,
+        {
+          method:
+            'POST',
+
+          body:
+            JSON.stringify({
+              name:
+                campaignName,
+
+              subject,
+
+              previewText:
+                preheader ||
+                undefined,
+
+              sender: {
+                email:
+                  senderEmail,
+
+                name:
+                  'FyndBo.se',
+              },
+
+              replyTo:
+                senderEmail,
+
+              htmlContent:
+                content,
+
+              recipients: {
+                listIds: [
+                  listId,
+                ],
+              },
+
+              tag:
+                'fyndbo-newsletter',
+            }),
+        }
+      )
+
+    if (
+      !createResponse.ok ||
+      !createData?.id
+    ) {
+      console.error(
+        'Brevo create campaign error:',
+        createData
+      )
+
+      return json(
+        {
+          error:
+            createData?.message ||
+            'Brevo kunde inte skapa utskicket.',
+        },
+        502
+      )
+    }
+
+    const campaignId =
+      Number(
+        createData.id
+      )
+
+    // ========================================================
+    // TEST
+    // ========================================================
+
     if (testEmail) {
-      to = [{ email: testEmail }]
+      const {
+        response:
+          testResponse,
+        data:
+          testData,
+      } =
+        await brevoRequest(
+          `/emailCampaigns/${campaignId}/sendTest`,
+          apiKey,
+          {
+            method:
+              'POST',
+
+            body:
+              JSON.stringify({
+                emailTo: [
+                  testEmail,
+                ],
+              }),
+          }
+        )
+
+      if (
+        !testResponse.ok
+      ) {
+        console.error(
+          'Brevo test send error:',
+          testData
+        )
+
+        return json(
+          {
+            error:
+              testData?.message ||
+              'Testutskicket kunde inte skickas.',
+          },
+          502
+        )
+      }
+
+      return json({
+        success:
+          true,
+
+        mode:
+          'test',
+
+        campaignId,
+
+        sent:
+          1,
+
+        message:
+          `Testutskicket skickades till ${testEmail}.`,
+      })
     }
 
-    const payload: any = {
-      sender: { 
-        email: process.env.BREVO_SENDER_EMAIL || 'info@fyndbo.se', 
-        name: 'FyndBo.se' 
-      },
-      subject,
-      htmlContent: content,
+    // ========================================================
+    // SEND NOW
+    // ========================================================
+
+    const {
+      response:
+        sendResponse,
+      data:
+        sendData,
+    } =
+      await brevoRequest(
+        `/emailCampaigns/${campaignId}/sendNow`,
+        apiKey,
+        {
+          method:
+            'POST',
+        }
+      )
+
+    if (
+      !sendResponse.ok
+    ) {
+      console.error(
+        'Brevo campaign send error:',
+        sendData
+      )
+
+      return json(
+        {
+          error:
+            sendData?.message ||
+            'Brevo kunde inte starta utskicket.',
+        },
+        502
+      )
     }
 
-    if (testEmail) {
-      payload.to = to
-    } else {
-      payload.listIds = [listId]
-    }
+    return json({
+      success:
+        true,
 
-    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
-      headers: {
-        'api-key': process.env.BREVO_API_KEY || '',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
+      mode:
+        'campaign',
+
+      campaignId,
+
+      sent:
+        recipientCount,
+
+      message:
+        recipientCount === 1
+          ? 'Nyhetsbrevet har skickats till 1 prenumerant.'
+          : `Nyhetsbrevet har skickats till ${recipientCount} prenumeranter.`,
     })
+  } catch (error) {
+    console.error(
+      'Brevo send route error:',
+      error
+    )
 
-    const data = await response.json()
-    if (!response.ok) {
-      console.error('Brevo API error:', data)
-      throw new Error(data.message || 'Brevo API error')
-    }
-
-    return NextResponse.json({ 
-      success: true, 
-      sent: testEmail ? 1 : undefined,
-      messageId: data.messageId 
-    })
-  } catch (error: any) {
-    console.error('Send error:', error)
-    return NextResponse.json({ 
-      error: error.message || 'Failed to send' 
-    }, { status: 500 })
+    return json(
+      {
+        error:
+          'Ett serverfel inträffade när utskicket skulle skickas.',
+      },
+      500
+    )
   }
 }
