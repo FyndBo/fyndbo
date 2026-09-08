@@ -87,41 +87,24 @@ async function brevoRequest(
   }
 }
 
-async function ensureBrevoContact(
-  email: string,
-  apiKey: string
+function buildTestHtml(
+  html: string,
+  testEmail: string
 ) {
-  const {
-    response,
-    data,
-  } =
-    await brevoRequest(
-      '/contacts',
-      apiKey,
-      {
-        method:
-          'POST',
+  const unsubscribeUrl =
+    `https://fyndbo.se/avregistrera?email=${encodeURIComponent(
+      testEmail
+    )}`
 
-        body:
-          JSON.stringify({
-            email,
-
-            // Om kontakten redan finns gör Brevo detta till en
-            // uppdatering i stället för att ge duplicate-fel.
-            updateEnabled:
-              true,
-          }),
-      }
+  return html
+    .replace(
+      /\{\{\s*unsubscribe\s*\}\}/gi,
+      unsubscribeUrl
     )
-
-  if (response.ok) {
-    return
-  }
-
-  throw new Error(
-    data?.message ||
-      'Testadressen kunde inte registreras som testkontakt i Brevo.'
-  )
+    .replace(
+      /\{\{\s*mirror\s*\}\}/gi,
+      'https://fyndbo.se'
+    )
 }
 
 export async function POST(
@@ -219,23 +202,8 @@ export async function POST(
       )
 
     // ========================================================
-    // VALIDATION
+    // COMMON VALIDATION
     // ========================================================
-
-    if (
-      !Number.isInteger(
-        listId
-      ) ||
-      listId <= 0
-    ) {
-      return json(
-        {
-          error:
-            'Välj en giltig mottagarlista.',
-        },
-        400
-      )
-    }
 
     if (
       subject.length < 2 ||
@@ -272,6 +240,133 @@ export async function POST(
         {
           error:
             'Testadressen är inte giltig.',
+        },
+        400
+      )
+    }
+
+    // ========================================================
+    // TESTUTSKICK
+    //
+    // Testmail går via Brevos transactional endpoint.
+    //
+    // Anledning:
+    // En kampanj kräver riktiga campaign recipients.
+    // Om den valda listan är tom kan Brevo annars svara:
+    // "There are no contacts associated with the given
+    // recipients info" redan när kampanjen skapas.
+    //
+    // Ett testmail ska kunna skickas även om listan är tom.
+    // ========================================================
+
+    if (testEmail) {
+      const testHtml =
+        buildTestHtml(
+          content,
+          testEmail
+        )
+
+      const {
+        response:
+          testResponse,
+        data:
+          testData,
+      } =
+        await brevoRequest(
+          '/smtp/email',
+          apiKey,
+          {
+            method:
+              'POST',
+
+            body:
+              JSON.stringify({
+                sender: {
+                  email:
+                    senderEmail,
+
+                  name:
+                    'FyndBo.se',
+                },
+
+                replyTo: {
+                  email:
+                    senderEmail,
+
+                  name:
+                    'FyndBo.se',
+                },
+
+                to: [
+                  {
+                    email:
+                      testEmail,
+                  },
+                ],
+
+                subject,
+
+                htmlContent:
+                  testHtml,
+
+                tags: [
+                  'fyndbo-newsletter-test',
+                ],
+              }),
+          }
+        )
+
+      if (
+        !testResponse.ok
+      ) {
+        console.error(
+          'Brevo transactional test error:',
+          testData
+        )
+
+        return json(
+          {
+            error:
+              testData?.message ||
+              'Testutskicket kunde inte skickas.',
+          },
+          502
+        )
+      }
+
+      return json({
+        success:
+          true,
+
+        mode:
+          'test',
+
+        sent:
+          1,
+
+        messageId:
+          testData?.messageId ||
+          null,
+
+        message:
+          `Testutskicket skickades till ${testEmail}.`,
+      })
+    }
+
+    // ========================================================
+    // RIKTIGT LISTUTSKICK
+    // ========================================================
+
+    if (
+      !Number.isInteger(
+        listId
+      ) ||
+      listId <= 0
+    ) {
+      return json(
+        {
+          error:
+            'Välj en giltig mottagarlista.',
         },
         400
       )
@@ -315,10 +410,7 @@ export async function POST(
           0
       )
 
-    // För ett riktigt utskick måste listan innehålla kontakter.
-    // Ett testutskick får däremot skickas även om huvudlistan är tom.
     if (
-      !testEmail &&
       recipientCount <= 0
     ) {
       return json(
@@ -331,50 +423,14 @@ export async function POST(
     }
 
     // ========================================================
-    // TEST CONTACT
-    //
-    // Brevo kräver att testmottagaren är en kontakt i kontot.
-    // Vi säkerställer därför att adressen finns i Brevo innan
-    // kampanjens sendTest-endpoint anropas.
-    //
-    // Den läggs INTE automatiskt i FyndBos nyhetsbrevslista.
-    // ========================================================
-
-    if (testEmail) {
-      try {
-        await ensureBrevoContact(
-          testEmail,
-          apiKey
-        )
-      } catch (error) {
-        console.error(
-          'Brevo test contact error:',
-          error
-        )
-
-        return json(
-          {
-            error:
-              error instanceof
-              Error
-                ? error.message
-                : 'Testadressen kunde inte förberedas i Brevo.',
-          },
-          502
-        )
-      }
-    }
-
-    // ========================================================
     // CREATE BREVO EMAIL CAMPAIGN
+    //
+    // Riktiga nyhetsbrev använder campaign API så att listor,
+    // unsubscribe, mirror och kampanjstatistik hanteras av Brevo.
     // ========================================================
 
     const campaignName =
-      `${
-        testEmail
-          ? 'TEST - '
-          : ''
-      }FyndBo - ${subject}`
+      `FyndBo - ${subject}`
         .slice(
           0,
           120
@@ -458,69 +514,7 @@ export async function POST(
       )
 
     // ========================================================
-    // TEST
-    // ========================================================
-
-    if (testEmail) {
-      const {
-        response:
-          testResponse,
-        data:
-          testData,
-      } =
-        await brevoRequest(
-          `/emailCampaigns/${campaignId}/sendTest`,
-          apiKey,
-          {
-            method:
-              'POST',
-
-            body:
-              JSON.stringify({
-                emailTo: [
-                  testEmail,
-                ],
-              }),
-          }
-        )
-
-      if (
-        !testResponse.ok
-      ) {
-        console.error(
-          'Brevo test send error:',
-          testData
-        )
-
-        return json(
-          {
-            error:
-              testData?.message ||
-              'Testutskicket kunde inte skickas.',
-          },
-          502
-        )
-      }
-
-      return json({
-        success:
-          true,
-
-        mode:
-          'test',
-
-        campaignId,
-
-        sent:
-          1,
-
-        message:
-          `Testutskicket skickades till ${testEmail}.`,
-      })
-    }
-
-    // ========================================================
-    // SEND NOW
+    // SEND CAMPAIGN NOW
     // ========================================================
 
     const {
