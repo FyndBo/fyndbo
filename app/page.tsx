@@ -20,11 +20,11 @@ export default function Home() {
 
   // ============================================================
   // NEDRÄKNING
-  // 23 november 2026 kl. 10:00 svensk tid
+  // 31 januari 2027 kl. 10:00 svensk tid
   // ============================================================
 
   useEffect(() => {
-    const launchDate = new Date('2026-11-23T10:00:00+01:00')
+    const launchDate = new Date('2027-01-31T10:00:00+01:00')
 
     const updateCountdown = () => {
       const now = new Date()
@@ -304,7 +304,7 @@ export default function Home() {
               text-gray-300
               sm:text-xs
             ">
-              Lanseras 23 november 2026
+              Lanseras 31 januari 2027
             </span>
 
           </div>
