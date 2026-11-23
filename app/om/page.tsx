@@ -768,6 +768,99 @@ export default function OmSida() {
           </section>
 
           {/* ====================================================
+              AI OCH INTERAKTIVA 3D-MODELLER
+          ==================================================== */}
+
+          <section
+            aria-labelledby="ai-3d-heading"
+            className="
+              mt-8
+              overflow-hidden
+              rounded-2xl
+              border
+              border-cyan-400/20
+              bg-gradient-to-br
+              from-cyan-500/10
+              via-blue-500/10
+              to-indigo-500/10
+              p-5
+              sm:p-6
+              md:p-8
+            "
+          >
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-cyan-300/20 bg-cyan-400/10 text-cyan-300">
+                <svg
+                  aria-hidden="true"
+                  className="h-6 w-6"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                >
+                  <path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z" strokeLinejoin="round" />
+                  <path d="m4.5 7.5 7.5 4.3 7.5-4.3M12 12v9M8 5.2l8 4.6" strokeLinejoin="round" />
+                </svg>
+              </div>
+
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300">
+                  Framtidens bostadsvisning
+                </p>
+                <h2
+                  id="ai-3d-heading"
+                  className="text-lg font-semibold text-white sm:text-xl md:text-2xl"
+                >
+                  Utforska bostaden med AI och 3D-modeller
+                </h2>
+              </div>
+            </div>
+
+            <p className="mb-6 max-w-3xl pl-0 text-sm leading-relaxed text-gray-200 sm:text-base sm:pl-14">
+              Tänk dig att kunna kliva in i ett hus redan innan visningen. Med interaktiva 3D-modeller ska du enkelt kunna se dig omkring online, upptäcka rummens utformning och få en bättre känsla för bostaden – direkt från mobilen eller datorn. AI kan dessutom hjälpa till att göra bostadssökandet smartare och mer personligt.
+            </p>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="rounded-xl border border-white/10 bg-slate-950/20 p-4">
+                <div className="mb-2 text-cyan-300">
+                  <svg aria-hidden="true" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                    <path d="M3 10.5 12 3l9 7.5V21H3V10.5Z" strokeLinejoin="round" />
+                    <path d="M9 21v-7h6v7M7 10h.01M17 10h.01" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <h3 className="mb-1 text-sm font-semibold text-white">Se dig omkring i 3D</h3>
+                <p className="text-xs leading-relaxed text-gray-400">Utforska bostadens rum och planlösning i en interaktiv digital visning.</p>
+              </div>
+
+              <div className="rounded-xl border border-white/10 bg-slate-950/20 p-4">
+                <div className="mb-2 text-cyan-300">
+                  <svg aria-hidden="true" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                    <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.64 5.64l2.12 2.12m8.48 8.48 2.12 2.12m0-12.72-2.12 2.12m-8.48 8.48-2.12 2.12" strokeLinecap="round" />
+                    <circle cx="12" cy="12" r="4" />
+                  </svg>
+                </div>
+                <h3 className="mb-1 text-sm font-semibold text-white">Smartare med AI</h3>
+                <p className="text-xs leading-relaxed text-gray-400">Få hjälp att upptäcka bostäder och funktioner som passar dina önskemål.</p>
+              </div>
+
+              <div className="rounded-xl border border-white/10 bg-slate-950/20 p-4">
+                <div className="mb-2 text-cyan-300">
+                  <svg aria-hidden="true" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                    <rect x="3" y="4" width="18" height="13" rx="2" />
+                    <path d="M8 21h8M12 17v4M7 9h4m-4 4h7" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <h3 className="mb-1 text-sm font-semibold text-white">Visning online</h3>
+                <p className="text-xs leading-relaxed text-gray-400">Få en tydligare bild av hemmet när det passar dig – på mobil eller dator.</p>
+              </div>
+            </div>
+
+            <p className="mt-4 text-xs leading-relaxed text-cyan-100/70">
+              Detta är en vision för hur FyndBo kan utvecklas framöver.
+            </p>
+          </section>
+
+          {/* ====================================================
               VISION
           ==================================================== */}
 

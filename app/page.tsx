@@ -664,6 +664,155 @@ export default function Home() {
 
         </div>
 
+
+        {/* ======================================================
+            FRAMTIDENS BOSTADSVISNING
+        ====================================================== */}
+
+        <section className="
+          mx-auto
+          mb-10
+          max-w-5xl
+          overflow-hidden
+          rounded-2xl
+          border
+          border-blue-400/20
+          bg-gradient-to-br
+          from-blue-500/10
+          via-white/5
+          to-indigo-500/10
+          p-5
+          shadow-xl
+          backdrop-blur-sm
+          sm:mb-14
+          sm:p-7
+        ">
+          <div className="
+            grid
+            items-center
+            gap-6
+            md:grid-cols-[1fr_0.9fr]
+            md:gap-8
+          ">
+            <div>
+              <span className="
+                mb-3
+                inline-flex
+                items-center
+                rounded-full
+                border
+                border-blue-300/20
+                bg-blue-400/10
+                px-3
+                py-1
+                text-[10px]
+                font-medium
+                uppercase
+                tracking-wider
+                text-blue-200
+                sm:text-xs
+              ">
+                Framtidens bostadsvisning
+              </span>
+
+              <h2 className="
+                mb-3
+                text-2xl
+                font-bold
+                tracking-tight
+                text-white
+                sm:text-3xl
+              ">
+                Upptäck bostaden i 3D
+              </h2>
+
+              <p className="
+                max-w-xl
+                text-sm
+                leading-relaxed
+                text-gray-300
+                sm:text-base
+              ">
+                Tänk dig att kunna utforska ett hus direkt på skärmen.
+                Med interaktiva 3D-modeller och smart AI vill vi göra
+                det enklare att få en känsla för bostadens rum,
+                planlösning och möjligheter – redan innan visningen.
+              </p>
+
+              <p className="
+                mt-3
+                text-xs
+                text-blue-200/80
+                sm:text-sm
+              ">
+                En vision vi vill utveckla vidare på FyndBo.
+              </p>
+            </div>
+
+            <div className="
+              relative
+              mx-auto
+              flex
+              min-h-48
+              w-full
+              max-w-sm
+              items-center
+              justify-center
+              overflow-hidden
+              rounded-xl
+              border
+              border-white/10
+              bg-slate-950/30
+              p-4
+              sm:min-h-56
+            ">
+              <div className="
+                absolute
+                inset-0
+                bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.16),transparent_70%)]
+              " />
+
+              <svg
+                viewBox="0 0 320 210"
+                role="img"
+                aria-label="Illustration av ett hus i en förenklad 3D-vy"
+                className="relative z-10 w-full max-w-[290px] drop-shadow-2xl"
+                fill="none"
+              >
+                <path d="M45 91 153 32l122 61-108 64L45 91Z" fill="#334155" stroke="#93C5FD" strokeWidth="2" />
+                <path d="m45 91 122 66v39L45 126V91Z" fill="#1E3A5F" stroke="#60A5FA" strokeWidth="2" />
+                <path d="m167 157 108-64v39l-108 64v-39Z" fill="#1D4ED8" stroke="#93C5FD" strokeWidth="2" />
+                <path d="m75 86 78-43 85 43-77 46-86-46Z" fill="#64748B" stroke="#BFDBFE" strokeWidth="2" />
+                <path d="m75 86 86 46v-25L75 64v22Z" fill="#475569" />
+                <path d="m161 132 77-46V64l-77 43v25Z" fill="#3B82F6" />
+                <path d="m75 64 78-43 85 43-77 43-86-43Z" fill="#94A3B8" stroke="#DBEAFE" strokeWidth="2" />
+                <path d="m110 104 29 16v-31l-29-16v31Z" fill="#BFDBFE" stroke="#E0F2FE" strokeWidth="1.5" />
+                <path d="m188 105 27-16V61l-27 15v29Z" fill="#BAE6FD" stroke="#E0F2FE" strokeWidth="1.5" />
+                <path d="m151 151 25 13v-35l-25-13v35Z" fill="#0F172A" stroke="#93C5FD" strokeWidth="1.5" />
+                <path d="m151 151 25 13" stroke="#93C5FD" strokeWidth="1.5" />
+                <path d="m163 157 12 7" stroke="#93C5FD" strokeWidth="1.5" />
+                <path d="m35 185 132 20 122-72" stroke="#60A5FA" strokeOpacity=".35" strokeWidth="1.5" strokeDasharray="4 5" />
+              </svg>
+
+              <span className="
+                absolute
+                bottom-3
+                right-3
+                rounded-full
+                border
+                border-white/10
+                bg-slate-900/80
+                px-2.5
+                py-1
+                text-[10px]
+                text-blue-200
+              ">
+                3D-koncept
+              </span>
+            </div>
+          </div>
+        </section>
+
         {/* ======================================================
             WAITLIST
         ====================================================== */}
